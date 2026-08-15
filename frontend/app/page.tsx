@@ -65,7 +65,7 @@ export default async function HomePage() {
                     <span className="w-1 h-4 sm:h-5 bg-gradient-to-b from-primary to-secondary rounded-full shrink-0" />
                     {category.name}
                   </h3>
-                  <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-5">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
                     {services.map((service: Service) => (
                       <ServiceCard
                         key={service.id}

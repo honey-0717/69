@@ -60,18 +60,18 @@ export function ProfileHeader({
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-white/10 bg-gradient-to-r from-[#17091a] via-[#140816] to-[#240b1e] shadow-2xl animate-fade-in-up',
+        'relative overflow-hidden rounded-3xl p-4 sm:p-8 border border-white/10 bg-gradient-to-br from-[#1c081e] via-[#140716] to-[#2b0c24] shadow-2xl animate-fade-in-up',
         className
       )}
     >
       {/* Background glow effects */}
-      <div className="absolute top-0 right-0 w-64 sm:w-80 h-64 sm:h-80 bg-[#ff2a85]/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-64 sm:w-80 h-64 sm:h-80 bg-purple-900/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-10 -right-10 w-48 sm:w-80 h-48 sm:h-80 bg-[#ff2a85]/20 rounded-full blur-2xl sm:blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-10 -left-10 w-48 sm:w-80 h-48 sm:h-80 bg-purple-900/30 rounded-full blur-2xl sm:blur-3xl pointer-events-none" />
 
-      <div className="relative flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-8 text-center sm:text-left">
+      <div className="relative flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-8 text-center sm:text-left">
         {/* Avatar with Pink Ring Glow & Hidden 5-Tap Gesture */}
         <div
-          className="relative shrink-0 w-28 h-28 xs:w-32 xs:h-32 sm:w-36 sm:h-36 rounded-full p-[2px] bg-gradient-to-tr from-[#ff2a85] to-[#ff60a8] shadow-[0_0_20px_rgba(255,42,133,0.35)] select-none cursor-pointer touch-manipulation overflow-hidden"
+          className="relative shrink-0 w-24 h-24 sm:w-36 sm:h-36 rounded-full p-[3px] bg-gradient-to-tr from-[#ff2a85] via-[#ff509e] to-[#ff85bf] shadow-[0_0_25px_rgba(255,42,133,0.45)] select-none cursor-pointer touch-manipulation overflow-hidden active:scale-95 transition-transform"
           onClick={handleAvatarTap}
         >
           <div className="relative w-full h-full rounded-full overflow-hidden">
@@ -88,11 +88,11 @@ export function ProfileHeader({
 
         {/* Info & Metadata */}
         <div className="flex-1 w-full">
-          <h1 className="font-display text-2xl xs:text-3xl sm:text-4xl font-extrabold text-[#ff2a85] tracking-tight mb-2">
+          <h1 className="font-display text-2xl sm:text-4xl font-extrabold text-[#ff2a85] tracking-tight mb-1.5 sm:mb-2">
             {displayName}
           </h1>
 
-          <p className="text-zinc-300/90 text-xs xs:text-sm sm:text-base leading-relaxed max-w-2xl mb-4 font-normal">
+          <p className="text-zinc-300/90 text-xs sm:text-base leading-relaxed max-w-2xl mb-3.5 sm:mb-4 font-normal px-1 sm:px-0">
             {bio}
           </p>
 
@@ -102,8 +102,8 @@ export function ProfileHeader({
             <AvailabilityBadge status={profile?.availability || 'available'} />
 
             {/* Location Pill */}
-            <div className="flex items-center gap-2 bg-[#1d1022]/80 border border-white/10 px-3 sm:px-3.5 py-1.5 rounded-full backdrop-blur-md">
-              <MapPin size={15} className="text-[#ff2a85] shrink-0" />
+            <div className="flex items-center gap-1.5 sm:gap-2 bg-[#1d1022]/90 border border-white/15 px-3 py-1.5 rounded-full backdrop-blur-md">
+              <MapPin size={14} className="text-[#ff2a85] shrink-0" />
               <span className="text-xs sm:text-sm font-medium text-zinc-200">Online Only</span>
             </div>
           </div>

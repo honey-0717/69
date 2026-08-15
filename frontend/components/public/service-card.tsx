@@ -46,36 +46,36 @@ export function ServiceCard({
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none" />
 
         {category && (
-          <div className="absolute top-3 left-3 z-10">
-            <span className="glass px-2.5 py-1 rounded-full text-[10px] font-medium text-white/90 uppercase tracking-wider">
+          <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10">
+            <span className="glass px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-medium text-white/90 uppercase tracking-wider">
               {category.name}
             </span>
           </div>
         )}
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
-          <h3 className="font-display text-sm sm:text-base font-semibold text-white mb-1.5 line-clamp-2 leading-snug">
+        <div className="absolute bottom-0 left-0 right-0 p-2.5 sm:p-4 z-10">
+          <h3 className="font-display text-xs sm:text-base font-bold text-white mb-1 line-clamp-2 leading-snug">
             {service.name}
           </h3>
-          <div className="flex items-center gap-3 text-sm">
-            <span className="text-primary font-bold">{formatPrice(service.price)}</span>
-            <span className="flex items-center gap-1 text-white/70">
-              <Clock size={12} />
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-3 text-xs sm:text-sm">
+            <span className="text-primary font-extrabold">{formatPrice(service.price)}</span>
+            <span className="flex items-center gap-1 text-white/70 text-[10px] sm:text-xs">
+              <Clock size={11} />
               {service.duration}
             </span>
           </div>
         </div>
       </div>
 
-      <div className="px-4 py-3 flex items-center justify-between bg-black/40">
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Star size={12} className="text-warning fill-warning" />
+      <div className="px-2.5 sm:px-4 py-2 sm:py-3 flex items-center justify-between bg-black/40">
+        <div className="flex items-center gap-1 text-[10px] sm:text-xs text-muted-foreground">
+          <Star size={11} className="text-warning fill-warning" />
           <span className="text-white/90 font-semibold">{stats.rating.toFixed(1)}</span>
           <span className="text-muted-foreground">({stats.count})</span>
         </div>
-        <span className="flex items-center gap-1 text-xs text-primary group-hover:gap-2 transition-all duration-300">
-          View Details
-          <ArrowRight size={14} />
+        <span className="flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-xs text-primary group-hover:gap-1.5 transition-all duration-300 font-semibold">
+          Book
+          <ArrowRight size={12} />
         </span>
       </div>
     </Link>
