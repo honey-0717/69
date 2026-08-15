@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { ProfileHeader } from '@/components/public/profile-header';
 import { ServiceCard } from '@/components/public/service-card';
-import { Sparkles, LayoutGrid, List, MessageCircle, Send, Check } from 'lucide-react';
+import { Sparkles, LayoutGrid, List } from 'lucide-react';
 import type { Profile, Service, Category, Review, SocialContact } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 
@@ -35,78 +35,89 @@ export function HomeClient({
 
   return (
     <div className="space-y-6 sm:space-y-10">
-      {/* Profile Banner */}
+      {/* Profile Header Banner */}
       <ProfileHeader profile={profile} />
 
-      {/* Sticky Category Filter & View Controls */}
-      <div className="sticky top-2 z-40 bg-[#0d0512]/80 backdrop-blur-xl border border-white/10 p-2 sm:p-3 rounded-2xl shadow-xl transition-all">
-        <div className="flex items-center justify-between gap-2 mb-2 sm:mb-0">
-          {/* Category Horizontal Scroll Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 px-1 flex-1">
-            <button
-              onClick={() => setSelectedCategory('all')}
-              className={cn(
-                'shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 touch-manipulation',
-                selectedCategory === 'all'
-                  ? 'bg-gradient-to-r from-primary to-accent text-white shadow-[0_0_15px_rgba(255,42,133,0.4)] scale-105'
-                  : 'bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10'
-              )}
-            >
-              <span>All</span>
-              <span className="text-[10px] opacity-80 px-1.5 py-0.2 rounded-full bg-black/30">
-                {totalServicesCount}
-              </span>
-            </button>
-
-            {servicesByCategory.map(({ category, services }) => {
-              const isSelected = selectedCategory === category.id;
-              return (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  className={cn(
-                    'shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 touch-manipulation whitespace-nowrap',
-                    isSelected
-                      ? 'bg-gradient-to-r from-primary to-accent text-white shadow-[0_0_15px_rgba(255,42,133,0.4)] scale-105'
-                      : 'bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10'
-                  )}
-                >
-                  <span>{category.name}</span>
-                  <span className="text-[10px] opacity-80 px-1.5 py-0.2 rounded-full bg-black/30">
-                    {services.length}
-                  </span>
-                </button>
-              );
-            })}
+      {/* Sticky Mobile Filter Bar */}
+      <div className="sticky top-2 z-40 bg-[#0d0512]/90 backdrop-blur-xl border border-white/10 p-2.5 sm:p-3.5 rounded-2xl shadow-2xl transition-all space-y-2.5">
+        {/* Top Control Row */}
+        <div className="flex items-center justify-between px-1">
+          <div className="flex items-center gap-2">
+            <Sparkles size={16} className="text-primary shrink-0 animate-pulse" />
+            <span className="font-display text-xs sm:text-sm font-bold text-white tracking-wide">
+              Catalogue
+            </span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30">
+              {totalServicesCount} items
+            </span>
           </div>
 
-          {/* Grid vs List View Switcher for Mobile */}
-          <div className="flex items-center gap-1 bg-white/5 border border-white/10 p-1 rounded-xl shrink-0">
+          {/* View Switcher: Grid vs List */}
+          <div className="flex items-center gap-1 bg-white/5 border border-white/10 p-0.5 sm:p-1 rounded-xl shrink-0">
             <button
               onClick={() => setViewMode('grid')}
               className={cn(
-                'p-1.5 rounded-lg transition-colors touch-manipulation',
+                'p-1.5 rounded-lg transition-all duration-200 touch-manipulation',
                 viewMode === 'grid'
-                  ? 'bg-primary text-white shadow-sm'
+                  ? 'bg-primary text-white shadow-[0_0_10px_rgba(255,42,133,0.4)]'
                   : 'text-white/50 hover:text-white'
               )}
               title="Grid View"
             >
-              <LayoutGrid size={16} />
+              <LayoutGrid size={15} />
             </button>
             <button
               onClick={() => setViewMode('list')}
               className={cn(
-                'p-1.5 rounded-lg transition-colors touch-manipulation',
+                'p-1.5 rounded-lg transition-all duration-200 touch-manipulation',
                 viewMode === 'list'
-                  ? 'bg-primary text-white shadow-sm'
+                  ? 'bg-primary text-white shadow-[0_0_10px_rgba(255,42,133,0.4)]'
                   : 'text-white/50 hover:text-white'
               )}
               title="List View"
             >
-              <List size={16} />
+              <List size={15} />
             </button>
           </div>
+        </div>
+
+        {/* Full-Width Horizontal Category Pills Row */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 px-0.5 w-full">
+          <button
+            onClick={() => setSelectedCategory('all')}
+            className={cn(
+              'shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300 touch-manipulation',
+              selectedCategory === 'all'
+                ? 'bg-gradient-to-r from-primary to-accent text-white shadow-[0_0_12px_rgba(255,42,133,0.5)] scale-105'
+                : 'bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10'
+            )}
+          >
+            <span>All</span>
+            <span className="text-[10px] opacity-90 px-1.5 py-0.2 rounded-full bg-black/40 font-mono">
+              {totalServicesCount}
+            </span>
+          </button>
+
+          {servicesByCategory.map(({ category, services }) => {
+            const isSelected = selectedCategory === category.id;
+            return (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={cn(
+                  'shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300 touch-manipulation whitespace-nowrap',
+                  isSelected
+                    ? 'bg-gradient-to-r from-primary to-accent text-white shadow-[0_0_12px_rgba(255,42,133,0.5)] scale-105'
+                    : 'bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10'
+                )}
+              >
+                <span>{category.name}</span>
+                <span className="text-[10px] opacity-90 px-1.5 py-0.2 rounded-full bg-black/40 font-mono">
+                  {services.length}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
