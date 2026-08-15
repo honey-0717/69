@@ -298,7 +298,11 @@ export async function initDatabaseStore() {
   store.socialContacts = mergeSocialContacts(INITIAL_SOCIAL_CONTACTS, store.socialContacts);
 
   try {
-    const [prof, cat, serv, rev, pay, cont, term, msg] = await Promise.all([
+    const fetchTimeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Supabase fetch timed out after 3000ms')), 3000)
+    );
+
+    const supabaseFetch = Promise.all([
       adminSupabase.from('profile').select('*').limit(1).maybeSingle(),
       adminSupabase.from('categories').select('*').order('position', { ascending: true }),
       adminSupabase.from('services').select('*').order('position', { ascending: true }),
@@ -307,6 +311,11 @@ export async function initDatabaseStore() {
       adminSupabase.from('social_contacts').select('*'),
       adminSupabase.from('terms').select('*').limit(1).maybeSingle(),
       adminSupabase.from('message_template').select('*').limit(1).maybeSingle(),
+    ]);
+
+    const [prof, cat, serv, rev, pay, cont, term, msg]: any = await Promise.race([
+      supabaseFetch,
+      fetchTimeout,
     ]);
 
     if (prof.data) store.profile = { ...store.profile, ...prof.data };

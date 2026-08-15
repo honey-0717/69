@@ -106,25 +106,28 @@ import { Socket } from 'net';
 let server: any;
 const openSockets = new Set<Socket>();
 
-initDatabaseStore().then(() => {
-  server = app.listen(PORT, '0.0.0.0', () => {
-    console.log(`[BACKEND] HotHarini69 Express API server running on 0.0.0.0:${PORT}`);
-  });
+// Start listening IMMEDIATELY on process boot so Render health check & port scanner pass instantly (<10ms)
+server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`[BACKEND] HotHarini69 Express API server running on 0.0.0.0:${PORT}`);
+});
 
+server.on('error', (err: any) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`[BACKEND] Port ${PORT} is already in use by an active server process.`);
+    console.error('[BACKEND] Duplicate backend listener prevented.');
+  } else {
+    console.error('[BACKEND SERVER ERROR]', err);
+  }
+});
 
-  server.on('error', (err: any) => {
-    if (err.code === 'EADDRINUSE') {
-      console.error(`[BACKEND] Port ${PORT} is already in use by an active server process.`);
-      console.error('[BACKEND] Duplicate backend listener prevented.');
-    } else {
-      console.error('[BACKEND SERVER ERROR]', err);
-    }
-  });
+server.on('connection', (socket: Socket) => {
+  openSockets.add(socket);
+  socket.on('close', () => openSockets.delete(socket));
+});
 
-  server.on('connection', (socket: Socket) => {
-    openSockets.add(socket);
-    socket.on('close', () => openSockets.delete(socket));
-  });
+// Initialize database store asynchronously in background
+initDatabaseStore().catch((err) => {
+  console.warn('[BACKEND] Initial store load notice:', err?.message || err);
 });
 
 let isShuttingDown = false;
