@@ -8,10 +8,7 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceKey) {
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('[FATAL ERROR] SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be provided in environment variables for production.');
-  }
-  console.warn('[SUPABASE WARNING] SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variable is missing.');
+  console.warn('[SUPABASE NOTICE] Operating with seed & local store fallback. Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in environment variables for Supabase sync.');
 }
 
 const customWebSocket = typeof globalThis.WebSocket !== 'undefined' ? globalThis.WebSocket : WebSocket;
