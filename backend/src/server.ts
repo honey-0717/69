@@ -26,11 +26,7 @@ dotenv.config();
 const app = express();
 app.set('trust proxy', 1);
 
-let envPort = process.env.PORT;
-if (process.env.NODE_ENV === 'production' && (!envPort || envPort === '5000')) {
-  envPort = '10000';
-}
-const PORT = Number(envPort || 5000);
+const PORT = Number(process.env.PORT || 10000);
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 const CORS_ORIGIN = process.env.CORS_ORIGIN || FRONTEND_URL;
 
