@@ -2,6 +2,9 @@ import { getPublicData } from '@/lib/public-data';
 import { HomeClient } from '@/components/public/home-client';
 import type { Category } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function HomePage() {
   const data = await getPublicData();
   const enabledServices = data.services.filter((s) => s.enabled);

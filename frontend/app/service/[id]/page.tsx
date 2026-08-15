@@ -10,6 +10,9 @@ import { formatPrice } from '@/lib/helpers';
 import { DEFAULT_TERMS, DEFAULT_MESSAGE_TEMPLATE } from '@/lib/constants';
 import { getServiceReviews } from '@/lib/reviews-data';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function generateStaticParams() {
   try {
     const data = await getPublicData();
