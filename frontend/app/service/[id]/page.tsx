@@ -5,7 +5,7 @@ import { PhotoGallery } from '@/components/public/photo-gallery';
 import { ReviewsSection } from '@/components/public/reviews-section';
 import { PaymentMethodsSection } from '@/components/public/payment-methods-section';
 import { ServiceDetailClient } from '@/components/public/service-detail-client';
-import { Clock, IndianRupee, ChevronLeft, Info, AlertTriangle } from 'lucide-react';
+import { Clock, IndianRupee, ChevronLeft, Info, AlertTriangle, Star, ShieldCheck, Sparkles } from 'lucide-react';
 import { formatPrice } from '@/lib/helpers';
 import { DEFAULT_TERMS, DEFAULT_MESSAGE_TEMPLATE } from '@/lib/constants';
 import { getServiceReviews } from '@/lib/reviews-data';
@@ -40,103 +40,109 @@ export default async function ServiceDetailPage({
   const reviewData = getServiceReviews(service.id, data.reviews);
 
   return (
-    <main className="relative min-h-screen">
+    <main className="relative min-h-screen pb-16">
+      {/* Background Glow Effects */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-[120px]" />
+        <div className="absolute top-0 left-1/4 w-80 sm:w-96 h-80 sm:h-96 bg-primary/15 rounded-full blur-[100px] sm:blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 w-80 sm:w-96 h-80 sm:h-96 bg-secondary/15 rounded-full blur-[100px] sm:blur-[120px]" />
       </div>
 
-      <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-        {/* Back link */}
+      <div className="relative max-w-5xl mx-auto px-3.5 sm:px-6 py-4 sm:py-10">
+        {/* Back Link */}
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-white transition-colors mb-6"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs sm:text-sm text-white/80 hover:text-white hover:bg-white/10 transition-all mb-4 sm:mb-6 touch-manipulation"
         >
           <ChevronLeft size={16} />
-          Back to all services
+          Back to catalogue
         </Link>
 
         <div className="grid lg:grid-cols-2 gap-6 lg:gap-10">
-          {/* Left: Gallery */}
+          {/* Left: Gallery (Mobile-first Aspect Ratio) */}
           <div className="lg:sticky lg:top-8 lg:self-start">
-            <div className="aspect-[4/5] w-full">
+            <div className="aspect-square sm:aspect-[4/5] w-full rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
               <PhotoGallery photos={service.photos} name={service.name} className="w-full h-full" />
             </div>
           </div>
 
-          {/* Right: Details */}
+          {/* Right: Details Container */}
           <div className="space-y-5">
-            {/* Header */}
-            <div className="animate-fade-in-up">
+            {/* Service Header Info */}
+            <div className="animate-fade-in-up bg-black/40 backdrop-blur-xl border border-white/10 p-4 sm:p-6 rounded-3xl shadow-xl">
               {category && (
-                <span className="inline-block glass px-3 py-1 rounded-full text-[10px] font-medium text-white/90 uppercase tracking-wider mb-3">
+                <span className="inline-block px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold text-primary bg-primary/10 border border-primary/20 uppercase tracking-widest mb-2.5">
                   {category.name}
                 </span>
               )}
-              <h1 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
+              
+              <h1 className="font-display text-2xl sm:text-4xl font-black text-white tracking-tight mb-3 bg-gradient-to-r from-white via-pink-100 to-primary bg-clip-text text-transparent leading-tight">
                 {service.name}
               </h1>
 
-              <div className="flex flex-wrap items-center gap-4 mb-4">
-                <div className="flex items-center gap-1.5 text-2xl font-bold text-primary">
-                  <IndianRupee size={22} />
-                  {service.price.toLocaleString('en-IN')}
+              {/* Price & Duration Pill Cards */}
+              <div className="flex flex-wrap items-center gap-3 my-4">
+                <div className="flex items-center gap-1 bg-gradient-to-r from-primary/20 via-primary/10 to-accent/20 border border-primary/40 px-4 py-2 rounded-2xl text-xl sm:text-2xl font-black text-primary shadow-[0_0_15px_rgba(255,42,133,0.25)]">
+                  <IndianRupee size={20} />
+                  <span>{service.price.toLocaleString('en-IN')}</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                  <Clock size={18} />
+
+                <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-semibold text-white/90">
+                  <Clock size={16} className="text-primary" />
                   <span>{service.duration}</span>
                 </div>
+
+                <div className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/30 px-3 py-2 rounded-2xl text-xs font-bold text-amber-300">
+                  <Star size={14} className="text-warning fill-warning" />
+                  <span>{reviewData.rating.toFixed(1)}</span>
+                  <span className="text-white/50">({reviewData.count} reviews)</span>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2 text-sm">
-                <span className="text-warning text-lg">★</span>
-                <span className="font-semibold text-white">{reviewData.rating.toFixed(1)}</span>
-                <span className="text-muted-foreground">/ 5</span>
-                <span className="text-muted-foreground">·</span>
-                <span className="text-muted-foreground">{reviewData.count} Reviews</span>
-              </div>
+              {/* Short description highlight */}
+              {service.short_description && (
+                <p className="text-white/90 text-xs sm:text-sm leading-relaxed font-normal pt-2 border-t border-white/10">
+                  {service.short_description}
+                </p>
+              )}
             </div>
 
-            {/* Short description */}
-            {service.short_description && (
-              <p className="text-white/80 leading-relaxed animate-fade-in-up animation-delay-100">
-                {service.short_description}
-              </p>
-            )}
-
-            {/* Full details */}
+            {/* Full Details Section */}
             {service.full_description && (
-              <div className="glass-card p-5 animate-fade-in-up animation-delay-200">
+              <div className="glass-card p-4 sm:p-6 rounded-3xl animate-fade-in-up border border-white/10 shadow-lg">
                 <div className="flex items-center gap-2 mb-3">
-                  <Info size={16} className="text-accent" />
-                  <h3 className="font-semibold text-white text-sm uppercase tracking-wider">Full Details</h3>
+                  <Info size={16} className="text-primary shrink-0" />
+                  <h3 className="font-bold text-white text-xs sm:text-sm uppercase tracking-wider">
+                    Full Service Details
+                  </h3>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                <div className="text-xs sm:text-sm text-white/80 leading-relaxed whitespace-pre-line font-normal space-y-2">
                   {service.full_description}
-                </p>
+                </div>
               </div>
             )}
 
-            {/* Important info */}
+            {/* Important Info Section */}
             {service.important_info && (
-              <div className="glass-card p-5 border-warning/20 animate-fade-in-up animation-delay-300">
+              <div className="glass-card p-4 sm:p-6 rounded-3xl border-warning/30 bg-amber-950/20 animate-fade-in-up shadow-lg">
                 <div className="flex items-center gap-2 mb-3">
-                  <AlertTriangle size={16} className="text-warning" />
-                  <h3 className="font-semibold text-white text-sm uppercase tracking-wider">Important Information</h3>
+                  <AlertTriangle size={16} className="text-warning shrink-0" />
+                  <h3 className="font-bold text-warning text-xs sm:text-sm uppercase tracking-wider">
+                    Important Rules &amp; Guidelines
+                  </h3>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                <p className="text-xs sm:text-sm text-warning/90 leading-relaxed whitespace-pre-line font-normal">
                   {service.important_info}
                 </p>
               </div>
             )}
 
-            {/* Payment methods */}
+            {/* Payment Methods Section */}
             <PaymentMethodsSection
               methods={enabledPaymentMethods}
-              className="animate-fade-in-up animation-delay-300"
+              className="animate-fade-in-up"
             />
 
-            {/* Terms & Contact (client component) */}
+            {/* Terms & Instant Booking Actions */}
             <ServiceDetailClient
               service={service}
               terms={data.terms?.content || DEFAULT_TERMS}
@@ -144,9 +150,17 @@ export default async function ServiceDetailPage({
               contacts={enabledContacts}
             />
 
-            {/* Reviews */}
-            <div className="pt-4">
-              <h3 className="font-display text-xl font-bold text-white mb-4">Customer Reviews ({reviewData.count})</h3>
+            {/* Customer Reviews Section */}
+            <div className="pt-4 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-display text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                  <Sparkles size={18} className="text-amber-400" />
+                  Client Reviews
+                </h3>
+                <span className="text-xs text-white/60">
+                  {reviewData.count} verified ratings
+                </span>
+              </div>
               <ReviewsSection reviews={reviewData.reviews} totalCount={reviewData.count} rating={reviewData.rating} />
             </div>
           </div>
