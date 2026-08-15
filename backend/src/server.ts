@@ -65,6 +65,11 @@ app.use((_req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+// Root & Health Check Endpoints
+app.get(['/', '/health'], (_req: Request, res: Response) => {
+  res.status(200).json({ status: 'ok', service: 'HotHarini69 Express API Backend' });
+});
+
 // Mount API Routes
 app.use('/api/health', healthRoutes);
 app.use('/api/public-data', publicDataRoutes);
