@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import WebSocket from 'ws';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -13,6 +14,8 @@ if (!supabaseUrl || !supabaseServiceKey) {
   console.warn('[SUPABASE WARNING] SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variable is missing.');
 }
 
+const customWebSocket = typeof globalThis.WebSocket !== 'undefined' ? globalThis.WebSocket : WebSocket;
+
 export const adminSupabase = createClient(
   supabaseUrl || 'https://rkalzhrpjtgkhozpsqup.supabase.co',
   supabaseServiceKey || 'placeholder_key',
@@ -20,6 +23,9 @@ export const adminSupabase = createClient(
     auth: {
       persistSession: false,
       autoRefreshToken: false,
+    },
+    realtime: {
+      transport: customWebSocket as any,
     },
   }
 );
