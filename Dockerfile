@@ -15,6 +15,7 @@ FROM node:22-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV PORT=10000
 
 COPY backend/package*.json ./backend/
 RUN cd backend && npm ci --omit=dev
