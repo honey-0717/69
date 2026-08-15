@@ -110,8 +110,8 @@ export function ServiceCard({
         <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
 
         {category && (
-          <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10">
-            <span className="glass px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-medium text-white/90 uppercase tracking-wider backdrop-blur-md">
+          <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 z-10 max-w-[85%]">
+            <span className="inline-block px-2 py-0.5 rounded-md text-[8px] sm:text-[9px] font-bold text-white/90 bg-black/75 border border-white/15 uppercase tracking-wide truncate max-w-full shadow-sm">
               {category.name}
             </span>
           </div>
