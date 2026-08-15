@@ -64,24 +64,22 @@ export function ProfileHeader({
         className
       )}
     >
-      {/* Background ambient mesh & glows */}
-      <div className="absolute -top-16 -right-16 w-56 sm:w-96 h-56 sm:h-96 bg-gradient-to-br from-primary/30 to-accent/20 rounded-full blur-[80px] pointer-events-none" />
-      <div className="absolute -bottom-16 -left-16 w-56 sm:w-96 h-56 sm:h-96 bg-purple-900/40 rounded-full blur-[80px] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,42,133,0.08),transparent_50%)] pointer-events-none" />
+      {/* Ambient soft glow */}
+      <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative flex flex-col items-center text-center sm:text-left sm:flex-row sm:items-start gap-5 sm:gap-8">
-        {/* Avatar Container with Golden-Pink Neon Ring & Verified Badge */}
+      <div className="relative flex flex-col items-center text-center sm:text-left sm:flex-row sm:items-start gap-4 sm:gap-6">
+        {/* Avatar Container - Compact & Sharp */}
         <div className="relative shrink-0 group">
           <div
-            className="relative w-28 h-28 sm:w-40 sm:h-40 rounded-full p-[4px] bg-gradient-to-tr from-[#ff2a85] via-[#ffd700] to-[#ff509e] shadow-[0_0_35px_rgba(255,42,133,0.5)] select-none cursor-pointer touch-manipulation overflow-hidden active:scale-95 transition-transform duration-300 ring-4 ring-primary/20"
+            className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full p-[2.5px] bg-gradient-to-tr from-primary via-accent to-amber-300 shadow-[0_0_15px_rgba(255,42,133,0.35)] select-none cursor-pointer touch-manipulation overflow-hidden active:scale-95 transition-transform duration-300"
             onClick={handleAvatarTap}
           >
             <div className="relative w-full h-full rounded-full overflow-hidden bg-black">
               <Image
                 src={photoUrl}
                 alt={displayName}
-                width={160}
-                height={160}
+                width={96}
+                height={96}
                 className="w-full h-full object-cover pointer-events-none rounded-full group-hover:scale-105 transition-transform duration-500"
                 priority
               />
@@ -89,8 +87,8 @@ export function ProfileHeader({
           </div>
 
           {/* Verified Host Badge overlay */}
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto sm:-right-1 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-lg border border-white/20 uppercase tracking-wider">
-            <ShieldCheck size={12} className="text-white fill-white/20" />
+          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto sm:-right-1 bg-emerald-500 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-md border border-white/20 uppercase tracking-wider">
+            <ShieldCheck size={11} className="text-white fill-white/20" />
             Verified
           </div>
         </div>

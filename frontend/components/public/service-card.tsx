@@ -107,7 +107,7 @@ export function ServiceCard({
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-secondary/30" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
 
         {category && (
           <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10">

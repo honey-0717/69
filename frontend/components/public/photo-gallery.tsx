@@ -50,7 +50,7 @@ export function PhotoGallery({
             sizes="(max-width: 768px) 100vw, 50vw"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+          {/* Clean 100% visible image with no dark blur overlay */}
         </div>
 
         {hasMultiple && (
