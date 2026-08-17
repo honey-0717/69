@@ -501,11 +501,19 @@ export async function updateProfile(updates: any) {
 
   try {
     const { data, error } = await adminSupabase.from('profile').update(payload).eq('id', store.profile.id).select();
-    if (error || !data || data.length === 0) {
+    if (error && process.env.NODE_ENV === 'production') {
+      throw new Error(`Supabase profile update failed: ${error.message}`);
+    }
+    if (!data || data.length === 0) {
       const { error: upsertErr } = await adminSupabase.from('profile').upsert({ ...store.profile, ...payload });
-      if (upsertErr) console.warn('[SUPABASE PROFILE UPSERT WARNING]', upsertErr.message);
+      if (upsertErr && process.env.NODE_ENV === 'production') {
+        throw new Error(`Supabase profile upsert failed: ${upsertErr.message}`);
+      }
     }
   } catch (e: any) {
+    if (process.env.NODE_ENV === 'production') {
+      throw e;
+    }
     console.warn('[SUPABASE PROFILE UPDATE EXCEPTION]', e?.message || e);
   }
 
@@ -770,7 +778,7 @@ export async function updateSocialContacts(contacts: any[]) {
     saveLocalStore();
     broadcastChange('social_contacts_updated', store.socialContacts);
 
-    // Persist to Supabase DB in background
+    // Persist to Supabase DB
     try {
       for (const c of formatted) {
         if (!c.platform) continue;
@@ -780,22 +788,28 @@ export async function updateSocialContacts(contacts: any[]) {
           .eq('platform', c.platform)
           .select('*');
 
-        if (updateErr || !updateData || updateData.length === 0) {
-          try {
-            await adminSupabase
-              .from('social_contacts')
-              .upsert({
-                platform: c.platform,
-                value: c.value,
-                enabled: c.enabled,
-                updated_at: c.updated_at,
-              }, { onConflict: 'platform' });
-          } catch (upsertErr) {
-            // Silently catch upsert fallback errors
+        if (updateErr && process.env.NODE_ENV === 'production') {
+          throw new Error(`Supabase social contacts update failed for ${c.platform}: ${updateErr.message}`);
+        }
+
+        if (!updateData || updateData.length === 0) {
+          const { error: upsertErr } = await adminSupabase
+            .from('social_contacts')
+            .upsert({
+              platform: c.platform,
+              value: c.value,
+              enabled: c.enabled,
+              updated_at: c.updated_at,
+            }, { onConflict: 'platform' });
+          if (upsertErr && process.env.NODE_ENV === 'production') {
+            throw new Error(`Supabase social contacts upsert failed for ${c.platform}: ${upsertErr.message}`);
           }
         }
       }
     } catch (e: any) {
+      if (process.env.NODE_ENV === 'production') {
+        throw e;
+      }
       console.warn('[SUPABASE CONTACTS UPDATE WARNING]', e?.message || e);
     }
   }
@@ -818,13 +832,22 @@ export async function updateMessageTemplate(template: string) {
       .eq('id', tId)
       .select('*');
 
-    if (updateErr || !updateData || updateData.length === 0) {
+    if (updateErr && process.env.NODE_ENV === 'production') {
+      throw new Error(`Supabase message template update failed: ${updateErr.message}`);
+    }
+
+    if (!updateData || updateData.length === 0) {
       const { error: upsertErr } = await adminSupabase
         .from('message_template')
         .upsert({ id: tId, template, updated_at: updatedAt });
-      if (upsertErr) console.warn('[SUPABASE TEMPLATE UPSERT WARNING]', upsertErr.message);
+      if (upsertErr && process.env.NODE_ENV === 'production') {
+        throw new Error(`Supabase message template upsert failed: ${upsertErr.message}`);
+      }
     }
   } catch (e: any) {
+    if (process.env.NODE_ENV === 'production') {
+      throw e;
+    }
     console.warn('[SUPABASE TEMPLATE UPDATE EXCEPTION]', e?.message || e);
   }
 
