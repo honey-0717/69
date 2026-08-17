@@ -20,23 +20,37 @@ export function invalidateApiCache(endpointPattern?: string) {
   });
 }
 
+function getApiUrl(endpoint: string): string {
+  if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
+    return endpoint;
+  }
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  if (baseUrl && baseUrl.trim() !== '') {
+    const cleanBase = baseUrl.trim().replace(/\/+$/, '');
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    return `${cleanBase}${cleanEndpoint}`;
+  }
+  return endpoint;
+}
+
 export async function apiRequest<T = any>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<{ data: T | null; error: string | null }> {
+  const targetUrl = getApiUrl(endpoint);
   const method = (options.method || 'GET').toUpperCase();
   const isGet = method === 'GET';
 
   // Return cached GET response instantly if available and valid
   if (isGet) {
-    const cached = apiCache.get(endpoint);
+    const cached = apiCache.get(targetUrl);
     if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
       // Revalidate in background asynchronously without blocking UI
-      fetch(endpoint, { ...options, credentials: 'include' })
+      fetch(targetUrl, { ...options, credentials: 'include' })
         .then((res) => (res.ok ? res.json() : null))
         .then((fresh) => {
           if (fresh) {
-            apiCache.set(endpoint, { data: fresh, timestamp: Date.now() });
+            apiCache.set(targetUrl, { data: fresh, timestamp: Date.now() });
           }
         })
         .catch(() => {});
@@ -46,7 +60,7 @@ export async function apiRequest<T = any>(
   }
 
   try {
-    const res = await fetch(endpoint, {
+    const res = await fetch(targetUrl, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
@@ -65,7 +79,7 @@ export async function apiRequest<T = any>(
     }
 
     if (isGet) {
-      apiCache.set(endpoint, { data: body, timestamp: Date.now() });
+      apiCache.set(targetUrl, { data: body, timestamp: Date.now() });
     } else {
       // Invalidate cache on mutations
       invalidateApiCache();
@@ -82,7 +96,8 @@ export async function apiUpload<T = any>(
   formData: FormData
 ): Promise<{ data: T | null; error: string | null }> {
   try {
-    const res = await fetch(endpoint, {
+    const targetUrl = getApiUrl(endpoint);
+    const res = await fetch(targetUrl, {
       method: 'POST',
       body: formData,
       credentials: 'include',

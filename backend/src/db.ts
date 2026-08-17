@@ -7,8 +7,17 @@ dotenv.config();
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  console.warn('[SUPABASE NOTICE] Operating with seed & local store fallback. Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in environment variables for Supabase sync.');
+if (process.env.NODE_ENV === 'production') {
+  if (!supabaseUrl || supabaseUrl.trim() === '') {
+    throw new Error('[FATAL ERROR] SUPABASE_URL environment variable must be set in production.');
+  }
+  if (!supabaseServiceKey || supabaseServiceKey.trim() === '') {
+    throw new Error('[FATAL ERROR] SUPABASE_SERVICE_ROLE_KEY environment variable must be set in production.');
+  }
+} else {
+  if (!supabaseUrl || !supabaseServiceKey) {
+    console.warn('[SUPABASE NOTICE] Operating in development mode with seed & local store fallback.');
+  }
 }
 
 const customWebSocket = typeof globalThis.WebSocket !== 'undefined' ? globalThis.WebSocket : WebSocket;

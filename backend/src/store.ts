@@ -84,6 +84,11 @@ export let store: DatabaseStore = {
 
 let initialized = false;
 
+export function isStoreInitialized(): boolean {
+  return initialized;
+}
+
+
 function saveLocalStore() {
   try {
     if (!fs.existsSync(DATA_DIR)) {

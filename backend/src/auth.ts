@@ -4,11 +4,11 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'hotharini69_dev_secret_key_change_in_production';
-
-if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' && (!process.env.JWT_SECRET || process.env.JWT_SECRET.trim() === '')) {
   throw new Error('[FATAL ERROR] JWT_SECRET environment variable must be set in production.');
 }
+
+const JWT_SECRET = process.env.JWT_SECRET || 'hotharini69_dev_secret_key_change_in_production';
 
 
 export type AuthUser = {
