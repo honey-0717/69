@@ -24,13 +24,10 @@ function getApiUrl(endpoint: string): string {
   if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
     return endpoint;
   }
-  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-  if (baseUrl && baseUrl.trim() !== '') {
-    const cleanBase = baseUrl.trim().replace(/\/+$/, '');
-    const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-    return `${cleanBase}${cleanEndpoint}`;
-  }
-  return endpoint;
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://69-production-8508.up.railway.app';
+  const cleanBase = baseUrl.trim().replace(/\/+$/, '');
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  return `${cleanBase}${cleanEndpoint}`;
 }
 
 export async function apiRequest<T = any>(
