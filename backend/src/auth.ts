@@ -65,7 +65,10 @@ export function verifySessionToken(token: string | undefined): AuthUser | null {
 }
 
 export function requireAuth(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  const token = req.cookies?.auth_token;
+  const authHeader = req.headers.authorization;
+  const token =
+    req.cookies?.auth_token ||
+    (authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : undefined);
   const user = verifySessionToken(token);
 
   if (!user) {

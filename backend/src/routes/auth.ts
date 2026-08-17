@@ -48,11 +48,12 @@ router.post('/signup', signupLimiter, async (req: Request, res: Response) => {
     };
 
     const token = createSessionToken(user);
+    const isProd = process.env.NODE_ENV === 'production';
 
     res.cookie('auth_token', token, {
       httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      sameSite: isProd ? 'none' : 'lax',
+      secure: isProd,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -106,11 +107,12 @@ router.post('/login', loginLimiter, async (req: Request, res: Response) => {
     };
 
     const token = createSessionToken(user);
+    const isProd = process.env.NODE_ENV === 'production';
 
     res.cookie('auth_token', token, {
       httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      sameSite: isProd ? 'none' : 'lax',
+      secure: isProd,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -121,16 +123,20 @@ router.post('/login', loginLimiter, async (req: Request, res: Response) => {
 });
 
 router.post('/logout', (_req: Request, res: Response) => {
+  const isProd = process.env.NODE_ENV === 'production';
   res.clearCookie('auth_token', {
     httpOnly: true,
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
+    sameSite: isProd ? 'none' : 'lax',
+    secure: isProd,
   });
   return res.json({ message: 'Logged out successfully' });
 });
 
 router.get('/session', (req: Request, res: Response) => {
-  const token = req.cookies?.auth_token;
+  const authHeader = req.headers.authorization;
+  const token =
+    req.cookies?.auth_token ||
+    (authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : undefined);
   const user = verifySessionToken(token);
 
   if (!user) {

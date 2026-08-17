@@ -37,7 +37,17 @@ const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 const CORS_ORIGIN = process.env.CORS_ORIGIN || FRONTEND_URL;
 
 const allowedOrigins = new Set(
-  [FRONTEND_URL, CORS_ORIGIN, 'http://localhost:3000', 'http://127.0.0.1:3000'].filter(Boolean)
+  [
+    FRONTEND_URL,
+    CORS_ORIGIN,
+    'https://hotharini69.live',
+    'https://www.hotharini69.live',
+    'https://69-sigma-roan.vercel.app',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+  ]
+    .filter(Boolean)
+    .map((o) => o.replace(/\/+$/, ''))
 );
 
 app.use(
@@ -46,10 +56,16 @@ app.use(
       if (!origin) {
         return callback(null, true);
       }
-      if (allowedOrigins.has(origin)) {
+      const cleanOrigin = origin.replace(/\/+$/, '');
+      if (allowedOrigins.has(cleanOrigin)) {
         return callback(null, true);
       }
-      if (process.env.NODE_ENV !== 'production' && (origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1'))) {
+      if (
+        cleanOrigin.endsWith('.hotharini69.live') ||
+        cleanOrigin.endsWith('.vercel.app') ||
+        cleanOrigin.startsWith('http://localhost') ||
+        cleanOrigin.startsWith('http://127.0.0.1')
+      ) {
         return callback(null, true);
       }
       return callback(new Error(`Not allowed by CORS: ${origin}`));
