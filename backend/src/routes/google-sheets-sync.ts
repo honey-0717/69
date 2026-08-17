@@ -19,6 +19,47 @@ router.get('/status', (_req: Request, res: Response) => {
   });
 });
 
+// GET /api/google-sheets-sync/export-csv
+router.get('/export-csv', (_req: Request, res: Response) => {
+  const headers = [
+    'id',
+    'name',
+    'category',
+    'short_description',
+    'description',
+    'price',
+    'duration',
+    'status',
+    'display_order',
+    'thumbnail_url',
+    'gallery_urls',
+    'updated_at',
+  ];
+  let csv = headers.join(',') + '\n';
+
+  for (const s of store.services) {
+    const row = [
+      `"${s.id}"`,
+      `"${(s.name || '').replace(/"/g, '""')}"`,
+      `"${s.category_id || ''}"`,
+      `"${(s.short_description || '').replace(/"/g, '""')}"`,
+      `"${(s.full_description || (s as any).description || '').replace(/"/g, '""')}"`,
+      s.price || 0,
+      `"${s.duration || ''}"`,
+      s.enabled ? '"enabled"' : '"disabled"',
+      s.position ?? 0,
+      `"${(s.photos?.[0] || '').replace(/"/g, '""')}"`,
+      `"${JSON.stringify(s.photos || []).replace(/"/g, '""')}"`,
+      `"${s.updated_at || new Date().toISOString()}"`,
+    ];
+    csv += row.join(',') + '\n';
+  }
+
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', 'attachment; filename="hotharini69-services.csv"');
+  return res.send(csv);
+});
+
 // POST /api/google-sheets-sync/manual
 router.post('/manual', requireAuth, async (_req: Request, res: Response) => {
   try {
