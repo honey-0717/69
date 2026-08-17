@@ -23,7 +23,7 @@ if (process.env.NODE_ENV === 'production') {
 const customWebSocket = typeof globalThis.WebSocket !== 'undefined' ? globalThis.WebSocket : WebSocket;
 
 export const adminSupabase = createClient(
-  supabaseUrl || 'https://nxsywygcmsydlhuwqxel.supabase.co',
+  supabaseUrl || 'https://rkalzhrpjtgkhozpsqup.supabase.co',
   supabaseServiceKey || 'placeholder_key',
   {
     auth: {
