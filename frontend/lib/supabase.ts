@@ -79,7 +79,7 @@ export type ServiceWithCategory = Service & {
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://nxsywygcmsydlhuwqxel.supabase.co';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://rkalzhrpjtgkhozpsqup.supabase.co';
 const supabasePublishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_nL9T7Ec0_Q1mi3CmF9Tc_w_uiazMQ6a';
 
 export const supabase = createClient(supabaseUrl, supabasePublishableKey);
