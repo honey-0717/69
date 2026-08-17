@@ -778,13 +778,23 @@ export function getMessageTemplate() {
 
 export async function updateMessageTemplate(template: string) {
   const updatedAt = new Date().toISOString();
+  const tId = store.messageTemplate?.id || 'msg-tpl-001';
 
   try {
-    const { error } = await adminSupabase.from('message_template').update({ template, updated_at: updatedAt }).eq('id', store.messageTemplate.id);
-    if (error) throw new Error(`[SUPABASE DB ERROR] ${error.message}`);
+    const { data: updateData, error: updateErr } = await adminSupabase
+      .from('message_template')
+      .update({ template, updated_at: updatedAt })
+      .eq('id', tId)
+      .select('*');
+
+    if (updateErr || !updateData || updateData.length === 0) {
+      const { error: upsertErr } = await adminSupabase
+        .from('message_template')
+        .upsert({ id: tId, template, updated_at: updatedAt });
+      if (upsertErr) console.warn('[SUPABASE TEMPLATE UPSERT WARNING]', upsertErr.message);
+    }
   } catch (e: any) {
-    console.error('[SUPABASE TEMPLATE UPDATE FAILED]', e?.message || e);
-    throw e;
+    console.warn('[SUPABASE TEMPLATE UPDATE EXCEPTION]', e?.message || e);
   }
 
   store.messageTemplate = {
