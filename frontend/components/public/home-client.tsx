@@ -6,13 +6,14 @@ import { ServiceCard } from '@/components/public/service-card';
 import { Sparkles, LayoutGrid, List } from 'lucide-react';
 import type { Profile, Service, Category, Review, SocialContact } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
+import { useRealtimePublicData } from '@/lib/realtime';
 
 export function HomeClient({
-  profile,
-  categories,
-  servicesByCategory,
-  reviews,
-  socialContacts,
+  profile: initialProfile,
+  categories: initialCategories,
+  servicesByCategory: initialServicesByCategory,
+  reviews: initialReviews,
+  socialContacts: initialSocialContacts,
 }: {
   profile: Profile | null;
   categories: Category[];
@@ -22,6 +23,38 @@ export function HomeClient({
 }) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
+  const liveData = useRealtimePublicData();
+
+  const profile = liveData?.profile ?? initialProfile;
+  const categories = liveData?.categories && liveData.categories.length > 0 ? liveData.categories : initialCategories;
+  const reviews = liveData?.reviews ?? initialReviews;
+
+  const services: Service[] | null = liveData?.services ?? null;
+  let servicesByCategory = initialServicesByCategory;
+
+  if (services && Array.isArray(services)) {
+    const enabledServices = services.filter((s: Service) => s.enabled);
+    const catGroups = categories
+      .map((cat: Category) => ({
+        category: cat,
+        services: enabledServices
+          .filter((s: Service) => s.category_id === cat.id)
+          .sort((a: Service, b: Service) => (a.position ?? 0) - (b.position ?? 0)),
+      }))
+      .filter((group: any) => group.services.length > 0);
+
+    const categorizedIds = new Set(catGroups.flatMap((g: any) => g.services.map((s: Service) => s.id)));
+    const uncategorized = enabledServices.filter((s: Service) => !categorizedIds.has(s.id));
+
+    if (uncategorized.length > 0) {
+      catGroups.push({
+        category: { id: 'uncategorized', name: 'Other Services', position: 999, created_at: new Date().toISOString() },
+        services: uncategorized.sort((a: Service, b: Service) => (a.position ?? 0) - (b.position ?? 0)),
+      });
+    }
+    servicesByCategory = catGroups;
+  }
 
   const filteredGroups =
     selectedCategory === 'all'
