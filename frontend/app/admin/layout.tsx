@@ -40,8 +40,8 @@ function AdminLayoutContent({
   return (
     <div className="min-h-screen flex bg-background text-foreground">
       <AdminSidebar />
-      <main className="flex-1 overflow-x-hidden">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <main className="flex-1 overflow-x-hidden pt-16 lg:pt-0">
+        <div className="max-w-5xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
           {children}
         </div>
       </main>

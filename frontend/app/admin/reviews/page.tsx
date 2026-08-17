@@ -171,24 +171,24 @@ export default function AdminReviewsPage() {
                 )}
                 <p className="text-xs text-muted-foreground">{review.reviewer_name || 'Customer'}</p>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-end gap-1.5 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-white/5">
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="rounded-lg gap-1.5"
+                  className="h-8 px-2.5 rounded-lg gap-1.5 text-xs border border-white/5 bg-white/5 sm:bg-transparent"
                   onClick={() => toggleFlagged(review)}
                 >
                   <Flag size={14} className={review.flagged ? 'text-error' : 'text-muted-foreground'} />
-                  <span className="hidden sm:inline text-xs">{review.flagged ? 'Unflag' : 'Flag'}</span>
+                  <span className="text-xs">{review.flagged ? 'Unflag' : 'Flag'}</span>
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="rounded-lg gap-1.5"
+                  className="h-8 px-2.5 rounded-lg gap-1.5 text-xs border border-white/5 bg-white/5 sm:bg-transparent"
                   onClick={() => toggleHidden(review)}
                 >
                   {review.hidden ? <Eye size={14} className="text-muted-foreground" /> : <EyeOff size={14} className="text-muted-foreground" />}
-                  <span className="hidden sm:inline text-xs">{review.hidden ? 'Show' : 'Hide'}</span>
+                  <span className="text-xs">{review.hidden ? 'Show' : 'Hide'}</span>
                 </Button>
               </div>
             </div>

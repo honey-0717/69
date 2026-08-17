@@ -93,18 +93,18 @@ export default function AdminServicesPage() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between flex-wrap gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-bold text-white">Services</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">{services.length} total services</p>
+          <h1 className="font-display text-xl sm:text-2xl font-bold text-white">Services</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">{services.length} total services</p>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
             Google Sheets Synced
           </span>
-          <Link href="/admin/services/new">
-            <Button className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 gap-2 rounded-xl">
+          <Link href="/admin/services/new" className="shrink-0">
+            <Button className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 gap-1.5 rounded-xl text-xs sm:text-sm px-3.5 py-2">
               <Plus size={16} />
               Add Service
             </Button>
@@ -116,52 +116,60 @@ export default function AdminServicesPage() {
         {services.map((service) => (
           <div
             key={service.id}
-            className="glass-card p-4 flex items-center gap-4 flex-wrap animate-fade-in-up"
+            className="glass-card p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in-up"
           >
-            <div className="flex-1 min-w-[200px]">
+            <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-[10px] uppercase tracking-wider text-muted-foreground px-2 py-0.5 rounded bg-white/5">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground px-2 py-0.5 rounded bg-white/5 border border-white/5">
                   {getCategoryName(service.category_id)}
                 </span>
                 {!service.enabled && (
-                  <span className="text-[10px] text-muted-foreground px-2 py-0.5 rounded bg-muted/20">Hidden</span>
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-muted/20 text-muted-foreground border border-white/5">Hidden</span>
                 )}
               </div>
-              <h3 className="font-semibold text-white">{service.name}</h3>
-              <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
+              <h3 className="font-bold text-white text-base sm:text-lg leading-snug">{service.name}</h3>
+              <div className="flex items-center gap-3 mt-1 text-xs sm:text-sm text-muted-foreground">
                 <span className="text-primary font-bold">{formatPrice(service.price)}</span>
                 <span className="flex items-center gap-1">
-                  <Clock size={12} />
+                  <Clock size={13} className="shrink-0" />
                   {service.duration}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Link href={`/service/${service.id}`} target="_blank">
-                <Button variant="ghost" size="sm" className="rounded-lg text-muted-foreground hover:text-white gap-1.5">
-                  <Eye size={15} />
-                  <span className="hidden sm:inline">Preview</span>
+            <div className="flex items-center justify-between sm:justify-end gap-1.5 pt-2 sm:pt-0 border-t sm:border-t-0 border-white/5">
+              <div className="flex items-center gap-1">
+                <Link href={`/service/${service.id}`} target="_blank">
+                  <Button variant="ghost" size="sm" className="h-8 px-2.5 rounded-lg text-muted-foreground hover:text-white gap-1 text-xs">
+                    <Eye size={14} />
+                    <span>Preview</span>
+                  </Button>
+                </Link>
+                <Link href={`/admin/services/${service.id}`}>
+                  <Button variant="ghost" size="sm" className="h-8 px-2.5 rounded-lg text-muted-foreground hover:text-white gap-1 text-xs">
+                    <Pencil size={14} />
+                    <span>Edit</span>
+                  </Button>
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-2 rounded-lg text-muted-foreground hover:text-error gap-1 text-xs"
+                  onClick={() => setDeleteTarget(service)}
+                >
+                  <Trash2 size={14} />
                 </Button>
-              </Link>
-              <Link href={`/admin/services/${service.id}`}>
-                <Button variant="ghost" size="sm" className="rounded-lg text-muted-foreground hover:text-white gap-1.5">
-                  <Pencil size={15} />
-                  <span className="hidden sm:inline">Edit</span>
-                </Button>
-              </Link>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="rounded-lg text-muted-foreground hover:text-error gap-1.5"
-                onClick={() => setDeleteTarget(service)}
-              >
-                <Trash2 size={15} />
-              </Button>
-              <Switch
-                checked={service.enabled}
-                onCheckedChange={() => toggleEnabled(service)}
-              />
+              </div>
+
+              <div className="flex items-center gap-2 pl-2 border-l border-white/10 shrink-0">
+                <span className="text-[10px] text-muted-foreground sm:hidden font-medium">
+                  {service.enabled ? 'Active' : 'Off'}
+                </span>
+                <Switch
+                  checked={service.enabled}
+                  onCheckedChange={() => toggleEnabled(service)}
+                />
+              </div>
             </div>
           </div>
         ))}
