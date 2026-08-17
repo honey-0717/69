@@ -224,7 +224,6 @@ export const INITIAL_SERVICES = [
     full_description: 'Exclusive 5-minute Brinjal + Cum Show combo session (without face).',
     important_info: 'Restrictions:\n1. NO MEETS\n2. NO FACE\n3. NO BARGAINING',
     photos: ['https://images.pexels.com/photos/35435482/pexels-photo-35435482.jpeg?auto=compress&cs=tinysrgb&h=650&w=940'],
-    enabled: true,
     position: 10,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -232,4 +231,28 @@ export const INITIAL_SERVICES = [
 ];
 
 export const INITIAL_REVIEWS: any[] = [];
+
+export const DEFAULT_TERMS = `1. Time-pass persons, please stay away.
+
+2. Please contact only if you are genuinely interested in the selected service.
+
+3. Prices are fixed. No bargaining.
+
+4. No meet-ups or offline services.
+
+5. Please respect the service provider and communicate politely.
+
+6. Do not waste time with repeated or unnecessary messages.
+
+7. Service duration and price must be confirmed before proceeding.
+
+8. Availability can change at any time.
+
+9. Do not share or misuse personal information.
+
+10. Please use only the listed contact methods.
+
+11. Any violation of these terms may result in the contact being declined or blocked.
+
+12. By continuing, you confirm that you have read and agreed to these terms.`;
 

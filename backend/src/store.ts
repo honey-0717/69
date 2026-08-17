@@ -8,6 +8,7 @@ import {
   INITIAL_SERVICES,
   INITIAL_SOCIAL_CONTACTS,
   INITIAL_REVIEWS,
+  DEFAULT_TERMS,
 } from './initial-data';
 
 interface DatabaseStore {
@@ -49,7 +50,7 @@ export let store: DatabaseStore = {
   socialContacts: INITIAL_SOCIAL_CONTACTS,
   terms: {
     id: 'terms-default',
-    content: '1. Strict Age Limit (18+ only)\n2. No Physical Meets / Online Only\n3. No Recording or Screenshots Allowed\n4. Respectful Behavior Required at All Times',
+    content: DEFAULT_TERMS,
     updated_at: new Date().toISOString(),
   },
   messageTemplate: {
@@ -337,7 +338,11 @@ export async function initDatabaseStore() {
     if (cont.data && cont.data.length > 0) {
       store.socialContacts = mergeSocialContacts(store.socialContacts, cont.data);
     }
-    if (term.data) store.terms = term.data;
+    if (term.data && term.data.content && term.data.content.split('\n').filter((l: string) => l.trim()).length >= 10) {
+      store.terms = term.data;
+    } else {
+      store.terms = { id: term.data?.id || 'terms-default', content: DEFAULT_TERMS, updated_at: new Date().toISOString() };
+    }
     if (msg.data) store.messageTemplate = msg.data;
 
     initialized = true;
