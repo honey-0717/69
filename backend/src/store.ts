@@ -427,10 +427,21 @@ export async function updateService(id: string, updates: any) {
     updated_at: new Date().toISOString(),
   };
 
+  const dbPayload = { ...payload };
+  delete dbPayload.category; // remove populated join fields if any
+
   try {
-    const { error } = await adminSupabase.from('services').update(payload).eq('id', id);
-    if (error) console.warn('[SUPABASE SERVICE UPDATE WARNING]', error.message);
+    const { error } = await adminSupabase.from('services').update(dbPayload).eq('id', id);
+    if (error) {
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error(`Supabase service update failed: ${error.message}`);
+      }
+      console.warn('[SUPABASE SERVICE UPDATE WARNING]', error.message);
+    }
   } catch (e: any) {
+    if (process.env.NODE_ENV === 'production') {
+      throw e;
+    }
     console.warn('[SUPABASE SERVICE UPDATE EXCEPTION]', e?.message || e);
   }
 
@@ -778,32 +789,22 @@ export async function updateSocialContacts(contacts: any[]) {
     saveLocalStore();
     broadcastChange('social_contacts_updated', store.socialContacts);
 
-    // Persist to Supabase DB
+    // Persist to Supabase DB for supported database platforms
+    const DB_SUPPORTED_PLATFORMS = ['whatsapp', 'instagram', 'telegram'];
     try {
       for (const c of formatted) {
-        if (!c.platform) continue;
-        const { data: updateData, error: updateErr } = await adminSupabase
+        if (!c.platform || !DB_SUPPORTED_PLATFORMS.includes(c.platform.toLowerCase())) continue;
+
+        const { error: updateErr } = await adminSupabase
           .from('social_contacts')
           .update({ value: c.value, enabled: c.enabled, updated_at: c.updated_at })
-          .eq('platform', c.platform)
-          .select('*');
+          .eq('platform', c.platform);
 
-        if (updateErr && process.env.NODE_ENV === 'production') {
-          throw new Error(`Supabase social contacts update failed for ${c.platform}: ${updateErr.message}`);
-        }
-
-        if (!updateData || updateData.length === 0) {
-          const { error: upsertErr } = await adminSupabase
-            .from('social_contacts')
-            .upsert({
-              platform: c.platform,
-              value: c.value,
-              enabled: c.enabled,
-              updated_at: c.updated_at,
-            }, { onConflict: 'platform' });
-          if (upsertErr && process.env.NODE_ENV === 'production') {
-            throw new Error(`Supabase social contacts upsert failed for ${c.platform}: ${upsertErr.message}`);
+        if (updateErr) {
+          if (process.env.NODE_ENV === 'production') {
+            throw new Error(`Supabase social contacts update failed for ${c.platform}: ${updateErr.message}`);
           }
+          console.warn(`[SUPABASE CONTACTS UPDATE WARNING] ${c.platform}:`, updateErr.message);
         }
       }
     } catch (e: any) {
