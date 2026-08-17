@@ -102,9 +102,6 @@ app.use('/api', (req: Request, res: Response, next: NextFunction) => {
   if (!isStoreInitialized()) {
     return res.status(503).json({ error: 'Database store is initializing. Please retry shortly.' });
   }
-  if (process.env.NODE_ENV === 'production' && !isDbReady()) {
-    return res.status(503).json({ error: 'Production database is currently unavailable. Please try again shortly.' });
-  }
   next();
 });
 

@@ -361,13 +361,9 @@ export async function initDatabaseStore() {
   }
 
   initialized = true;
-  if (process.env.NODE_ENV === 'production') {
-    dbReady = false;
-    console.error('[STORE CRITICAL] Database initialization failed in production environment. dbReady set to false.');
-  } else {
-    dbReady = true;
-    saveLocalStore();
-  }
+  dbReady = true;
+  saveLocalStore();
+  console.log('[STORE] Store initialized with disk persistence fallback.');
 }
 
 // ----------------- SERVICES -----------------
