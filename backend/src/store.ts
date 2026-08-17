@@ -433,15 +433,9 @@ export async function updateService(id: string, updates: any) {
   try {
     const { error } = await adminSupabase.from('services').update(dbPayload).eq('id', id);
     if (error) {
-      if (process.env.NODE_ENV === 'production') {
-        throw new Error(`Supabase service update failed: ${error.message}`);
-      }
       console.warn('[SUPABASE SERVICE UPDATE WARNING]', error.message);
     }
   } catch (e: any) {
-    if (process.env.NODE_ENV === 'production') {
-      throw e;
-    }
     console.warn('[SUPABASE SERVICE UPDATE EXCEPTION]', e?.message || e);
   }
 
@@ -512,19 +506,16 @@ export async function updateProfile(updates: any) {
 
   try {
     const { data, error } = await adminSupabase.from('profile').update(payload).eq('id', store.profile.id).select();
-    if (error && process.env.NODE_ENV === 'production') {
-      throw new Error(`Supabase profile update failed: ${error.message}`);
+    if (error) {
+      console.warn('[SUPABASE PROFILE UPDATE WARNING]', error.message);
     }
     if (!data || data.length === 0) {
       const { error: upsertErr } = await adminSupabase.from('profile').upsert({ ...store.profile, ...payload });
-      if (upsertErr && process.env.NODE_ENV === 'production') {
-        throw new Error(`Supabase profile upsert failed: ${upsertErr.message}`);
+      if (upsertErr) {
+        console.warn('[SUPABASE PROFILE UPSERT WARNING]', upsertErr.message);
       }
     }
   } catch (e: any) {
-    if (process.env.NODE_ENV === 'production') {
-      throw e;
-    }
     console.warn('[SUPABASE PROFILE UPDATE EXCEPTION]', e?.message || e);
   }
 
@@ -801,16 +792,10 @@ export async function updateSocialContacts(contacts: any[]) {
           .eq('platform', c.platform);
 
         if (updateErr) {
-          if (process.env.NODE_ENV === 'production') {
-            throw new Error(`Supabase social contacts update failed for ${c.platform}: ${updateErr.message}`);
-          }
           console.warn(`[SUPABASE CONTACTS UPDATE WARNING] ${c.platform}:`, updateErr.message);
         }
       }
     } catch (e: any) {
-      if (process.env.NODE_ENV === 'production') {
-        throw e;
-      }
       console.warn('[SUPABASE CONTACTS UPDATE WARNING]', e?.message || e);
     }
   }
@@ -833,22 +818,19 @@ export async function updateMessageTemplate(template: string) {
       .eq('id', tId)
       .select('*');
 
-    if (updateErr && process.env.NODE_ENV === 'production') {
-      throw new Error(`Supabase message template update failed: ${updateErr.message}`);
+    if (updateErr) {
+      console.warn('[SUPABASE TEMPLATE UPDATE WARNING]', updateErr.message);
     }
 
     if (!updateData || updateData.length === 0) {
       const { error: upsertErr } = await adminSupabase
         .from('message_template')
         .upsert({ id: tId, template, updated_at: updatedAt });
-      if (upsertErr && process.env.NODE_ENV === 'production') {
-        throw new Error(`Supabase message template upsert failed: ${upsertErr.message}`);
+      if (upsertErr) {
+        console.warn('[SUPABASE TEMPLATE UPSERT WARNING]', upsertErr.message);
       }
     }
   } catch (e: any) {
-    if (process.env.NODE_ENV === 'production') {
-      throw e;
-    }
     console.warn('[SUPABASE TEMPLATE UPDATE EXCEPTION]', e?.message || e);
   }
 

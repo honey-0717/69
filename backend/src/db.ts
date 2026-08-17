@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const supabaseUrl = (process.env.SUPABASE_URL || 'https://rkalzhrpjtgkhozpsqup.supabase.co').trim().replace(/^["']|["']$/g, '');
+const supabaseUrl = (process.env.SUPABASE_URL || 'https://nxsywygcmsydlhuwqxel.supabase.co').trim().replace(/^["']|["']$/g, '');
 const supabaseServiceKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim().replace(/^["']|["']$/g, '');
 
 if (process.env.NODE_ENV === 'production') {
@@ -23,7 +23,7 @@ if (process.env.NODE_ENV === 'production') {
 const customWebSocket = typeof globalThis.WebSocket !== 'undefined' ? globalThis.WebSocket : WebSocket;
 
 export const adminSupabase = createClient(
-  supabaseUrl || 'https://rkalzhrpjtgkhozpsqup.supabase.co',
+  supabaseUrl || 'https://nxsywygcmsydlhuwqxel.supabase.co',
   supabaseServiceKey || 'placeholder_key',
   {
     auth: {
