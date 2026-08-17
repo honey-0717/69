@@ -343,7 +343,9 @@ export async function initDatabaseStore() {
     } else if (!store.terms || !store.terms.content) {
       store.terms = { id: term.data?.id || 'terms-default', content: DEFAULT_TERMS, updated_at: new Date().toISOString() };
     }
-    if (msg.data) store.messageTemplate = msg.data;
+    if (msg.data && msg.data.template && msg.data.template.trim().length > 0) {
+      store.messageTemplate = msg.data;
+    }
 
     initialized = true;
     saveLocalStore();
