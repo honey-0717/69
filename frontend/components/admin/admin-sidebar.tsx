@@ -126,8 +126,6 @@ export function AdminSidebar() {
 
   return (
     <>
-  return (
-    <>
       {/* Mobile top header bar */}
       <header className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-[#0d0512]/95 backdrop-blur-xl border-b border-white/10 px-4 flex items-center justify-between shadow-lg">
         <div className="flex items-center gap-2.5">
