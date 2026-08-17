@@ -26,9 +26,16 @@ export type PublicData = {
   messageTemplate: MessageTemplate | null;
 };
 
+const DEFAULT_BACKEND = 'https://69-production-8508.up.railway.app';
+const BACKEND_URL = (
+  process.env.BACKEND_INTERNAL_URL ||
+  process.env.BACKEND_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  DEFAULT_BACKEND
+).trim().replace(/\/+$/, '');
+
 export async function getPublicData(): Promise<PublicData> {
-  const BACKEND_URL = process.env.BACKEND_INTERNAL_URL || process.env.BACKEND_URL || 'http://localhost:5000';
-  const url = typeof window === 'undefined' ? `${BACKEND_URL}/api/public-data` : '/api/public-data';
+  const url = `${BACKEND_URL}/api/public-data`;
 
   try {
     const res = await fetch(url, {
