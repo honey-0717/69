@@ -72,7 +72,7 @@ export function ServiceDetailView({
         <div className="grid lg:grid-cols-2 gap-6 lg:gap-10">
           {/* Left: Gallery with Live Photos */}
           <div className="lg:sticky lg:top-8 lg:self-start">
-            <div className="aspect-square sm:aspect-[4/5] w-full rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+            <div className="w-full h-[420px] sm:h-[580px] rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
               <PhotoGallery photos={photos} name={service.name} className="w-full h-full" />
             </div>
           </div>
