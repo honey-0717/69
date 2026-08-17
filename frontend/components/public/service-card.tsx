@@ -35,15 +35,23 @@ export function ServiceCard({
         )}
       >
         {/* Left Image Thumbnail */}
-        <div className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-white/5">
+        <div className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-black/60">
           {photo ? (
-            <Image
-              src={photo}
-              alt={service.name}
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
-              sizes="112px"
-            />
+            <>
+              <Image
+                src={photo}
+                alt=""
+                fill
+                className="object-cover blur-xl opacity-40 scale-110 pointer-events-none"
+              />
+              <Image
+                src={photo}
+                alt={service.name}
+                fill
+                className="object-contain transition-transform duration-500 group-hover:scale-110 relative z-10 p-0.5"
+                sizes="112px"
+              />
+            </>
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-primary/30 to-secondary/30" />
           )}
@@ -95,19 +103,29 @@ export function ServiceCard({
         className
       )}
     >
-      <div className="relative w-full aspect-[4/5] overflow-hidden bg-white/5">
+      <div className="relative w-full aspect-[4/5] overflow-hidden bg-black/60">
         {photo ? (
-          <Image
-            src={photo}
-            alt={service.name}
-            width={400}
-            height={500}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          />
+          <>
+            {/* Ambient Blurred Background */}
+            <Image
+              src={photo}
+              alt=""
+              fill
+              className="object-cover blur-2xl opacity-40 scale-110 pointer-events-none"
+            />
+            {/* Full Uncropped Image */}
+            <Image
+              src={photo}
+              alt={service.name}
+              fill
+              className="object-contain transition-transform duration-500 group-hover:scale-105 relative z-10 p-0.5"
+              sizes="(max-width: 768px) 50vw, 25vw"
+            />
+          </>
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-secondary/30" />
         )}
-        <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none z-10" />
 
         {category && (
           <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 z-10 max-w-[85%]">

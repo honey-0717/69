@@ -37,20 +37,27 @@ export function PhotoGallery({
 
   return (
     <>
-      <div className={cn('relative group', className)}>
+      <div className={cn('relative group w-full h-full', className)}>
         <div
-          className="relative w-full h-full overflow-hidden rounded-3xl cursor-pointer"
+          className="relative w-full h-full overflow-hidden rounded-3xl cursor-pointer bg-black/60"
           onClick={() => setLightbox(true)}
         >
+          {/* Ambient Blurred Background to seamlessly fill container */}
+          <Image
+            src={photos[activeIndex]}
+            alt=""
+            fill
+            className="object-cover blur-2xl opacity-40 scale-110 pointer-events-none"
+          />
+          {/* 100% Full Uncropped Image */}
           <Image
             src={photos[activeIndex]}
             alt={`${name} photo ${activeIndex + 1}`}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="object-contain transition-transform duration-500 group-hover:scale-105 relative z-10"
             sizes="(max-width: 768px) 100vw, 50vw"
             priority
           />
-          {/* Clean 100% visible image with no dark blur overlay */}
         </div>
 
         {hasMultiple && (
@@ -69,7 +76,7 @@ export function PhotoGallery({
             >
               <ChevronRight size={20} className="text-white" />
             </button>
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
               {photos.map((_, i) => (
                 <button
                   key={i}
