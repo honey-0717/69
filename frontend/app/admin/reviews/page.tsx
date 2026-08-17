@@ -149,7 +149,7 @@ export default function AdminReviewsPage() {
         {filtered.map((review) => (
           <div key={review.id} className="glass-card p-4 animate-fade-in-up">
             <div className="flex items-start justify-between gap-4 flex-wrap">
-              <div className="flex-1 min-w-[200px]">
+              <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-2">
                   <StarRating rating={review.rating || 5} size="sm" />
                   <span className="text-xs text-muted-foreground">{formatDate(review.created_at)}</span>

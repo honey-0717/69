@@ -94,53 +94,56 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Welcome header */}
-      <div className="glass-card p-6 relative overflow-hidden">
+      <div className="glass-card p-4 sm:p-6 relative overflow-hidden">
         <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative flex items-center justify-between flex-wrap gap-4">
+        <div className="relative flex items-center justify-between gap-3">
           <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-white">
+            <h1 className="font-display text-xl sm:text-3xl font-bold text-white leading-tight">
               Welcome, Admin
             </h1>
-            <p className="text-muted-foreground text-sm mt-1">
-              Manage your profile, services, and settings
+            <p className="text-muted-foreground text-xs sm:text-sm mt-0.5">
+              Control panel overview
             </p>
           </div>
           <div
             className={cn(
-              'inline-flex items-center gap-2 rounded-full px-4 py-2 border',
+              'shrink-0 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 border text-xs font-semibold',
               availConfig.bg,
               availConfig.color,
               availConfig.border
             )}
           >
             <span className={cn('w-2 h-2 rounded-full', availConfig.dot, 'animate-pulse')} />
-            {availConfig.label}
+            <span>{availConfig.label}</span>
           </div>
         </div>
       </div>
 
-      {/* Stats grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* Stats grid - Sleek 3 Column Widget Grid on Mobile */}
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.label} className="glass-card p-5 animate-fade-in-up">
+            <div key={stat.label} className="glass-card p-3 sm:p-5 flex flex-col justify-between animate-fade-in-up">
               <div
                 className={cn(
-                  'w-11 h-11 rounded-xl bg-gradient-to-br flex items-center justify-center mb-3',
+                  'w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-gradient-to-br flex items-center justify-center mb-2',
                   stat.gradient
                 )}
               >
-                <Icon size={20} className="text-white" />
+                <Icon size={16} className="text-white sm:hidden" />
+                <Icon size={20} className="text-white hidden sm:block" />
               </div>
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-white">{stat.value}</span>
-                {stat.suffix && <span className="text-sm text-muted-foreground">{stat.suffix}</span>}
-                {stat.total !== undefined && (
-                  <span className="text-sm text-muted-foreground">/ {stat.total}</span>
-                )}
+              <div>
+                <div className="flex items-baseline gap-0.5 sm:gap-1">
+                  <span className="text-lg sm:text-3xl font-bold text-white leading-tight">{stat.value}</span>
+                  {stat.suffix && <span className="text-[10px] sm:text-sm text-muted-foreground">{stat.suffix}</span>}
+                  {stat.total !== undefined && (
+                    <span className="text-[10px] sm:text-sm text-muted-foreground">/{stat.total}</span>
+                  )}
+                </div>
+                <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 truncate">{stat.label}</p>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
             </div>
           );
         })}
