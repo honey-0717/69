@@ -50,7 +50,7 @@ export default function AdminTermsPage() {
 
   async function publish() {
     setSaving(true);
-    const { data, error } = await apiRequest<Terms>('/api/terms/publish', {
+    const { data, error } = await apiRequest<any>('/api/terms/publish', {
       method: 'POST',
       body: JSON.stringify({ content }),
     });
@@ -58,8 +58,13 @@ export default function AdminTermsPage() {
     if (error) {
       toast.error('Failed to publish: ' + error);
     } else {
-      setTerms(data);
-      toast.success('Terms published');
+      if (data?.content?.content) {
+        setTerms(data.content);
+        setContent(data.content.content);
+      } else if (data?.content) {
+        setTerms(data.content);
+      }
+      toast.success('Terms published successfully');
       logAdminActivity('terms_published', 'Published updated Terms & Conditions document');
     }
     setSaving(false);

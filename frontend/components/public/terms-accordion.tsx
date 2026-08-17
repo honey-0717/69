@@ -50,7 +50,7 @@ export function TermsAccordion({
             {termsList.map((term, i) => (
               <div key={i} className="flex gap-3 text-sm text-muted-foreground">
                 <span className="text-primary font-semibold shrink-0">{i + 1}.</span>
-                <span className="leading-relaxed">{term}</span>
+                <span className="leading-relaxed">{term.replace(/^\d+\.\s*/, '')}</span>
               </div>
             ))}
           </div>

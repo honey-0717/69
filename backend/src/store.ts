@@ -338,9 +338,9 @@ export async function initDatabaseStore() {
     if (cont.data && cont.data.length > 0) {
       store.socialContacts = mergeSocialContacts(store.socialContacts, cont.data);
     }
-    if (term.data && term.data.content && term.data.content.split('\n').filter((l: string) => l.trim()).length >= 10) {
+    if (term.data && term.data.content && term.data.content.trim().length > 0) {
       store.terms = term.data;
-    } else {
+    } else if (!store.terms || !store.terms.content) {
       store.terms = { id: term.data?.id || 'terms-default', content: DEFAULT_TERMS, updated_at: new Date().toISOString() };
     }
     if (msg.data) store.messageTemplate = msg.data;
@@ -701,21 +701,27 @@ export function getTerms() {
 
 export async function updateTerms(content: string) {
   const updatedAt = new Date().toISOString();
+  const tId = store.terms?.id || 'terms-default';
 
   try {
-    const { error } = await adminSupabase.from('terms').update({ content, updated_at: updatedAt }).eq('id', store.terms.id);
-    if (error) console.warn('[SUPABASE TERMS UPDATE WARNING]', error.message);
+    const { data: updateData, error } = await adminSupabase.from('terms').update({ content, updated_at: updatedAt }).eq('id', tId).select();
+    if (error || !updateData || updateData.length === 0) {
+      const { error: upsertErr } = await adminSupabase.from('terms').upsert({ id: tId, content, updated_at: updatedAt });
+      if (upsertErr) console.warn('[SUPABASE TERMS UPSERT WARNING]', upsertErr.message);
+    }
   } catch (e: any) {
     console.warn('[SUPABASE TERMS UPDATE EXCEPTION]', e?.message || e);
   }
 
   store.terms = {
-    ...store.terms,
+    id: tId,
     content,
     updated_at: updatedAt,
   };
+
   saveLocalStore();
   broadcastChange('terms_updated', store.terms);
+  broadcastChange('terms_published', store.terms);
   return store.terms;
 }
 
