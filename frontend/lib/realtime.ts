@@ -100,11 +100,17 @@ export function useRealtimeProfile() {
 
   useEffect(() => {
     fetchProfile();
-    return realtimeManager.subscribe((parsed) => {
+    const unsub = realtimeManager.subscribe((parsed) => {
       if (parsed.type && (parsed.type.includes('profile') || parsed.type.includes('availability'))) {
         fetchProfile();
       }
     });
+    const interval = setInterval(fetchProfile, 4000);
+
+    return () => {
+      unsub();
+      clearInterval(interval);
+    };
   }, []);
 
   return profile;
@@ -121,11 +127,17 @@ export function useRealtimeServices() {
 
   useEffect(() => {
     fetchServices();
-    return realtimeManager.subscribe((parsed) => {
+    const unsub = realtimeManager.subscribe((parsed) => {
       if (parsed.type && parsed.type.includes('service')) {
         fetchServices();
       }
     });
+    const interval = setInterval(fetchServices, 4000);
+
+    return () => {
+      unsub();
+      clearInterval(interval);
+    };
   }, []);
 
   return services;
@@ -142,11 +154,17 @@ export function useRealtimeReviews() {
 
   useEffect(() => {
     fetchReviews();
-    return realtimeManager.subscribe((parsed) => {
+    const unsub = realtimeManager.subscribe((parsed) => {
       if (parsed.type && parsed.type.includes('review')) {
         fetchReviews();
       }
     });
+    const interval = setInterval(fetchReviews, 4000);
+
+    return () => {
+      unsub();
+      clearInterval(interval);
+    };
   }, []);
 
   return reviews;
@@ -163,9 +181,15 @@ export function useRealtimePublicData() {
 
   useEffect(() => {
     fetchPublicData();
-    return realtimeManager.subscribe(() => {
+    const unsub = realtimeManager.subscribe(() => {
       fetchPublicData();
     });
+    const interval = setInterval(fetchPublicData, 4000);
+
+    return () => {
+      unsub();
+      clearInterval(interval);
+    };
   }, []);
 
   return publicData;

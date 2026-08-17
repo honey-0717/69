@@ -35,11 +35,15 @@ const BACKEND_URL = (
 ).trim().replace(/\/+$/, '');
 
 export async function getPublicData(): Promise<PublicData> {
-  const url = `${BACKEND_URL}/api/public-data`;
+  const url = `${BACKEND_URL}/api/public-data?t=${Date.now()}`;
 
   try {
     const res = await fetch(url, {
       cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+      },
     });
 
     if (!res.ok) {

@@ -220,7 +220,7 @@ const LEGACY_CATEGORY_IDS = new Set([
 
 function mergeServices(baseServices: any[], fetchedServices: any[]) {
   const map = new Map<string, any>();
-  const all = [...baseServices, ...fetchedServices];
+  const all = [...fetchedServices, ...baseServices];
 
   for (const s of all) {
     if (!s || !s.id || LEGACY_SERVICE_IDS.has(s.id)) continue;
@@ -242,16 +242,19 @@ function mergeServices(baseServices: any[], fetchedServices: any[]) {
 
 function mergeCategories(baseCats: any[], fetchedCats: any[]) {
   const map = new Map<string, any>();
-  const all = [...baseCats, ...fetchedCats];
+  const all = [...fetchedCats, ...baseCats];
 
   for (const c of all) {
     if (!c || !c.id || LEGACY_CATEGORY_IDS.has(c.id)) continue;
     const canonicalId = getCanonicalCategoryId(c);
     const key = canonicalId || c.id;
 
-    if (!map.has(key)) {
+    const existing = map.get(key);
+    if (!existing) {
       const initialMatch = INITIAL_CATEGORIES.find((ic) => ic.id === key);
       map.set(key, initialMatch ? { ...initialMatch, ...c, id: key } : { ...c, id: key });
+    } else {
+      map.set(key, { ...existing, ...c, id: key });
     }
   }
 
