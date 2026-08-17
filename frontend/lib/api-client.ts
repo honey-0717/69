@@ -37,9 +37,10 @@ export async function apiRequest<T = any>(
   const targetUrl = getApiUrl(endpoint);
   const method = (options.method || 'GET').toUpperCase();
   const isGet = method === 'GET';
+  const isAuthEndpoint = endpoint.includes('/api/auth') || endpoint.includes('/auth/');
 
-  // Return cached GET response instantly if available and valid
-  if (isGet) {
+  // Return cached GET response instantly if available and valid (excluding auth endpoints)
+  if (isGet && !isAuthEndpoint) {
     const cached = apiCache.get(targetUrl);
     if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
       // Revalidate in background asynchronously without blocking UI

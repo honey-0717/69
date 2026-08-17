@@ -25,33 +25,21 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
 });
 
-let cachedUser: User | null = null;
-let sessionChecked = false;
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(cachedUser);
-  const [loading, setLoading] = useState(!sessionChecked);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
 
     async function checkSession() {
-      if (sessionChecked) {
-        setUser(cachedUser);
-        setLoading(false);
-        return;
-      }
-
       const { data, error } = await apiRequest<{ authenticated: boolean; user: User }>('/api/auth/session');
       if (!mounted) return;
       if (!error && data?.authenticated && data.user) {
-        cachedUser = data.user;
         setUser(data.user);
       } else {
-        cachedUser = null;
         setUser(null);
       }
-      sessionChecked = true;
       setLoading(false);
     }
 
@@ -69,8 +57,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     if (!error && data?.user) {
-      cachedUser = data.user;
-      sessionChecked = true;
       setUser(data.user);
       return { error: null };
     }
@@ -85,8 +71,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     if (!error && data?.user) {
-      cachedUser = data.user;
-      sessionChecked = true;
       setUser(data.user);
       return { error: null };
     }
@@ -96,8 +80,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     await apiRequest('/api/auth/logout', { method: 'POST' });
-    cachedUser = null;
-    sessionChecked = false;
     setUser(null);
   };
 

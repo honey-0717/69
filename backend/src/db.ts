@@ -36,3 +36,67 @@ export const adminSupabase = createClient(
   }
 );
 
+export async function verifyProductionSupabaseCredentials(): Promise<{
+  urlConfigured: boolean;
+  keyConfigured: boolean;
+  isServiceRoleClaim: boolean;
+  readSuccess: boolean;
+  error: string | null;
+}> {
+  const urlConfigured = Boolean(supabaseUrl && supabaseUrl.trim().length > 0);
+  const keyConfigured = Boolean(supabaseServiceKey && supabaseServiceKey.trim().length > 0);
+
+  let isServiceRoleClaim = false;
+  if (keyConfigured && supabaseServiceKey) {
+    try {
+      const parts = supabaseServiceKey.split('.');
+      if (parts.length === 3) {
+        const payloadJson = Buffer.from(parts[1], 'base64url').toString('utf8');
+        const payload = JSON.parse(payloadJson);
+        isServiceRoleClaim = payload.role === 'service_role';
+      }
+    } catch {
+      isServiceRoleClaim = false;
+    }
+  }
+
+  if (!urlConfigured || !keyConfigured) {
+    return {
+      urlConfigured,
+      keyConfigured,
+      isServiceRoleClaim,
+      readSuccess: false,
+      error: 'SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variable is missing',
+    };
+  }
+
+  try {
+    const { error } = await adminSupabase.from('profile').select('id').limit(1);
+    if (error) {
+      return {
+        urlConfigured,
+        keyConfigured,
+        isServiceRoleClaim,
+        readSuccess: false,
+        error: error.message,
+      };
+    }
+
+    return {
+      urlConfigured,
+      keyConfigured,
+      isServiceRoleClaim,
+      readSuccess: true,
+      error: null,
+    };
+  } catch (err: any) {
+    return {
+      urlConfigured,
+      keyConfigured,
+      isServiceRoleClaim,
+      readSuccess: false,
+      error: err?.message || 'Database connection error',
+    };
+  }
+}
+

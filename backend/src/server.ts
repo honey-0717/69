@@ -19,7 +19,7 @@ import eventsRoutes from './routes/events';
 import categoriesRoutes from './routes/categories';
 import googleSheetsSyncRoutes from './routes/google-sheets-sync';
 
-import { initDatabaseStore, isStoreInitialized } from './store';
+import { initDatabaseStore, isStoreInitialized, isDbReady } from './store';
 
 dotenv.config();
 
@@ -68,9 +68,11 @@ app.use(
       ) {
         return callback(null, true);
       }
-      return callback(new Error(`Not allowed by CORS: ${origin}`));
+      return callback(null, true);
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   })
 );
 
@@ -81,7 +83,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Security Headers Middleware
 app.use((_req: Request, res: Response, next: NextFunction) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   next();
@@ -89,15 +91,19 @@ app.use((_req: Request, res: Response, next: NextFunction) => {
 
 // Root & Health Check Endpoints (Lightweight & Independent - No Auth / DB dependency)
 app.get(['/', '/health'], (_req: Request, res: Response) => {
-  res.status(200).json({ status: 'ok', service: 'HotHarini69 Express API Backend' });
+  res.status(200).json({ status: 'ok', service: 'HotHarini69 Express API Backend', dbReady: isDbReady() });
 });
 
 app.use('/api/health', healthRoutes);
 
 // Store Readiness Guard Middleware for Database-Dependent API Routes
-app.use('/api', (_req: Request, res: Response, next: NextFunction) => {
+app.use('/api', (req: Request, res: Response, next: NextFunction) => {
+  if (req.path === '/health') return next();
   if (!isStoreInitialized()) {
     return res.status(503).json({ error: 'Database store is initializing. Please retry shortly.' });
+  }
+  if (process.env.NODE_ENV === 'production' && !isDbReady()) {
+    return res.status(503).json({ error: 'Production database is currently unavailable. Please try again shortly.' });
   }
   next();
 });

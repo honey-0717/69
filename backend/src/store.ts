@@ -295,67 +295,77 @@ function mergeSocialContacts(baseContacts: any[], fetchedContacts: any[]) {
   return Array.from(map.values());
 }
 
+let dbReady = false;
+
+export function isDbReady(): boolean {
+  return dbReady;
+}
+
 export async function initDatabaseStore() {
   if (initialized) return;
 
   // Step 1: Load from local disk storage if available
   loadLocalStore();
 
-  // Step 2: Ensure all INITIAL_SERVICES, INITIAL_CATEGORIES, and INITIAL_SOCIAL_CONTACTS exist in store
+  // Step 2: Ensure default structures
   store.categories = mergeCategories(INITIAL_CATEGORIES, store.categories);
   store.services = mergeServices(INITIAL_SERVICES, store.services);
   store.socialContacts = mergeSocialContacts(INITIAL_SOCIAL_CONTACTS, store.socialContacts);
 
-  try {
-    const fetchTimeout = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Supabase fetch timed out after 3000ms')), 3000)
-    );
+  let attempts = 0;
+  const maxAttempts = process.env.NODE_ENV === 'production' ? 3 : 1;
 
-    const supabaseFetch = Promise.all([
-      adminSupabase.from('profile').select('*').limit(1).maybeSingle(),
-      adminSupabase.from('categories').select('*').order('position', { ascending: true }),
-      adminSupabase.from('services').select('*').order('position', { ascending: true }),
-      adminSupabase.from('reviews').select('*').order('created_at', { ascending: false }),
-      adminSupabase.from('payment_methods').select('*').order('position', { ascending: true }),
-      adminSupabase.from('social_contacts').select('*'),
-      adminSupabase.from('terms').select('*').limit(1).maybeSingle(),
-      adminSupabase.from('message_template').select('*').limit(1).maybeSingle(),
-    ]);
+  while (attempts < maxAttempts) {
+    attempts++;
+    try {
+      const fetchTimeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(`Supabase fetch timed out after 5000ms (attempt ${attempts})`)), 5000)
+      );
 
-    const [prof, cat, serv, rev, pay, cont, term, msg]: any = await Promise.race([
-      supabaseFetch,
-      fetchTimeout,
-    ]);
+      const supabaseFetch = Promise.all([
+        adminSupabase.from('profile').select('*').limit(1).maybeSingle(),
+        adminSupabase.from('categories').select('*').order('position', { ascending: true }),
+        adminSupabase.from('services').select('*').order('position', { ascending: true }),
+        adminSupabase.from('reviews').select('*').order('created_at', { ascending: false }),
+        adminSupabase.from('payment_methods').select('*').order('position', { ascending: true }),
+        adminSupabase.from('social_contacts').select('*'),
+        adminSupabase.from('terms').select('*').limit(1).maybeSingle(),
+        adminSupabase.from('message_template').select('*').limit(1).maybeSingle(),
+      ]);
 
-    if (prof.data) store.profile = { ...store.profile, ...prof.data };
+      const [prof, cat, serv, rev, pay, cont, term, msg]: any = await Promise.race([
+        supabaseFetch,
+        fetchTimeout,
+      ]);
 
-    if (cat.data && cat.data.length > 0) {
-      store.categories = mergeCategories(store.categories, cat.data);
+      if (prof.data) store.profile = { ...store.profile, ...prof.data };
+      if (cat.data && cat.data.length > 0) store.categories = mergeCategories(store.categories, cat.data);
+      if (serv.data && serv.data.length > 0) store.services = mergeServices(store.services, serv.data);
+      if (rev.data && rev.data.length > 0) store.reviews = rev.data;
+      if (pay.data && pay.data.length > 0) store.paymentMethods = pay.data;
+      if (cont.data && cont.data.length > 0) store.socialContacts = mergeSocialContacts(store.socialContacts, cont.data);
+      if (term.data && term.data.content && term.data.content.trim().length > 0) store.terms = term.data;
+      if (msg.data && msg.data.template && msg.data.template.trim().length > 0) store.messageTemplate = msg.data;
+
+      initialized = true;
+      dbReady = true;
+      saveLocalStore();
+      console.log(`[STORE] Server database store initialized successfully. Active services: ${store.services.length}`);
+      return;
+    } catch (e: any) {
+      console.warn(`[STORE] Database initialization attempt ${attempts} warning:`, e.message);
+      if (attempts < maxAttempts) {
+        await new Promise((r) => setTimeout(r, 1000));
+      }
     }
-    if (serv.data && serv.data.length > 0) {
-      store.services = mergeServices(store.services, serv.data);
-    }
+  }
 
-    if (rev.data && rev.data.length > 0) store.reviews = rev.data;
-    if (pay.data && pay.data.length > 0) store.paymentMethods = pay.data;
-    if (cont.data && cont.data.length > 0) {
-      store.socialContacts = mergeSocialContacts(store.socialContacts, cont.data);
-    }
-    if (term.data && term.data.content && term.data.content.trim().length > 0) {
-      store.terms = term.data;
-    } else if (!store.terms || !store.terms.content) {
-      store.terms = { id: term.data?.id || 'terms-default', content: DEFAULT_TERMS, updated_at: new Date().toISOString() };
-    }
-    if (msg.data && msg.data.template && msg.data.template.trim().length > 0) {
-      store.messageTemplate = msg.data;
-    }
-
-    initialized = true;
-    saveLocalStore();
-    console.log(`[STORE] Server database store initialized. Total services active: ${store.services.length}`);
-  } catch (e: any) {
-    console.warn('[STORE] Initial fetch warning, using seed/local store:', e.message);
-    initialized = true;
+  initialized = true;
+  if (process.env.NODE_ENV === 'production') {
+    dbReady = false;
+    console.error('[STORE CRITICAL] Database initialization failed in production environment. dbReady set to false.');
+  } else {
+    dbReady = true;
     saveLocalStore();
   }
 }
