@@ -169,23 +169,32 @@ export default function AdminPaymentsPage() {
 
       <div className="space-y-3">
         {methods.map((method) => (
-          <div key={method.id} className="glass-card p-4 flex items-center gap-4 animate-fade-in-up">
-            <PaymentLogo name={method.name} className="w-10 h-10" />
-            <div className="flex-1">
-              <h3 className="font-semibold text-white">{method.name}</h3>
-              <p className="text-xs text-muted-foreground">
-                {method.enabled ? 'Visible to customers' : 'Hidden from customers'}
-              </p>
+          <div key={method.id} className="glass-card p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in-up">
+            <div className="flex items-center gap-3">
+              <PaymentLogo name={method.name} className="w-10 h-10 shrink-0" />
+              <div>
+                <h3 className="font-bold text-white text-base">{method.name}</h3>
+                <p className="text-xs text-muted-foreground">
+                  {method.enabled ? 'Visible to customers' : 'Hidden from customers'}
+                </p>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" className="rounded-lg text-muted-foreground hover:text-white gap-1.5" onClick={() => openEdit(method)}>
-                <Pencil size={14} />
-                <span className="hidden sm:inline text-xs">Edit</span>
-              </Button>
-              <Button variant="ghost" size="sm" className="rounded-lg text-muted-foreground hover:text-error" onClick={() => setDeleteTarget(method)}>
-                <Trash2 size={14} />
-              </Button>
-              <Switch checked={method.enabled} onCheckedChange={() => toggleEnabled(method)} />
+            <div className="flex items-center justify-between sm:justify-end gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-white/5">
+              <div className="flex items-center gap-1">
+                <Button variant="ghost" size="sm" className="h-8 px-2.5 rounded-lg text-muted-foreground hover:text-white gap-1 text-xs" onClick={() => openEdit(method)}>
+                  <Pencil size={14} />
+                  <span>Edit</span>
+                </Button>
+                <Button variant="ghost" size="sm" className="h-8 px-2 rounded-lg text-muted-foreground hover:text-error text-xs" onClick={() => setDeleteTarget(method)}>
+                  <Trash2 size={14} />
+                </Button>
+              </div>
+              <div className="flex items-center gap-2 pl-2 border-l border-white/10 shrink-0">
+                <span className="text-[10px] text-muted-foreground sm:hidden font-medium">
+                  {method.enabled ? 'Active' : 'Off'}
+                </span>
+                <Switch checked={method.enabled} onCheckedChange={() => toggleEnabled(method)} />
+              </div>
             </div>
           </div>
         ))}

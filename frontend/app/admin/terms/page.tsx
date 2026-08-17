@@ -122,7 +122,7 @@ export default function AdminTermsPage() {
       <Button
         onClick={publish}
         disabled={saving}
-        className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 rounded-xl gap-2"
+        className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 rounded-xl gap-2 w-full sm:w-auto py-2.5"
       >
         {saving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
         Publish Terms

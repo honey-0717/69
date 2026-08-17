@@ -252,7 +252,7 @@ export function ServiceForm({ service }: { service?: Service | null }) {
       </div>
 
       {/* Price & Duration */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1.5">
           <Label className="text-xs uppercase tracking-wider text-muted-foreground">Price (₹)</Label>
           <Input
@@ -427,17 +427,17 @@ export function ServiceForm({ service }: { service?: Service | null }) {
       </div>
 
       {/* Submit */}
-      <div className="flex gap-3 pt-2">
+      <div className="flex flex-col sm:flex-row gap-3 pt-2">
         <Button
           type="submit"
           disabled={loading}
-          className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 rounded-xl gap-2"
+          className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 rounded-xl gap-2 w-full sm:w-auto py-2.5"
         >
           {loading ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
           {service ? 'Save Changes' : 'Save Service'}
         </Button>
-        <Link href="/admin/services">
-          <Button type="button" variant="outline" className="rounded-xl border-white/10">
+        <Link href="/admin/services" className="w-full sm:w-auto">
+          <Button type="button" variant="outline" className="rounded-xl border-white/10 w-full sm:w-auto py-2.5">
             Cancel
           </Button>
         </Link>
