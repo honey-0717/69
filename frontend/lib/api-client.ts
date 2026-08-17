@@ -6,7 +6,7 @@ type CacheEntry = {
 };
 
 const apiCache = new Map<string, CacheEntry>();
-const CACHE_TTL_MS = 60 * 1000; // 1 minute TTL for GET requests
+const CACHE_TTL_MS = 2 * 1000; // 2 seconds TTL for instant data sync
 
 export function invalidateApiCache(endpointPattern?: string) {
   if (!endpointPattern) {

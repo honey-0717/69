@@ -34,12 +34,28 @@ export function HomeClient({
   let servicesByCategory = initialServicesByCategory;
 
   if (services && Array.isArray(services)) {
-    const enabledServices = services.filter((s: Service) => s.enabled);
+    const enabledServices = services.filter((s: Service) => s.enabled !== false && String(s.enabled) !== 'false');
+    const isCatMatch = (sCatId: string | null | undefined, cat: Category) => {
+      if (!sCatId) return false;
+      if (sCatId === cat.id) return true;
+      if (sCatId.toLowerCase() === cat.name?.toLowerCase()) return true;
+      const aliases: Record<string, string[]> = {
+        'cat-demo': ['cat-demo', 'demo', '88bef4b9-fd4b-4ad2-97fa-4f9d154721c2'],
+        'cat-vc': ['cat-vc', 'video call (vc)', 'video call', 'cd53d390-1cd5-4fc1-8e11-f30d9748d46d'],
+        'cat-voice': ['cat-voice', 'voice call', 'f0009287-5953-436d-8a5e-db73a37e37a6'],
+        'cat-special': ['cat-special', 'special services (without face)', 'premium services', 'special services', '26be4de5-dfff-4e1f-9116-2011c7d03fe4'],
+      };
+      for (const list of Object.values(aliases)) {
+        if (list.includes(sCatId) && list.includes(cat.id)) return true;
+      }
+      return false;
+    };
+
     const catGroups = categories
       .map((cat: Category) => ({
         category: cat,
         services: enabledServices
-          .filter((s: Service) => s.category_id === cat.id)
+          .filter((s: Service) => isCatMatch(s.category_id, cat))
           .sort((a: Service, b: Service) => (a.position ?? 0) - (b.position ?? 0)),
       }))
       .filter((group: any) => group.services.length > 0);

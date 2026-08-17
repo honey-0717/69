@@ -368,17 +368,18 @@ export function getServiceById(id: string) {
 }
 
 export async function createService(data: any) {
+  const catId = (data.category_id && KNOWN_CATEGORY_ALIASES[data.category_id]) || data.category_id || 'cat-demo';
   const newService = {
     id: data.id || `srv-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
     name: data.name,
     price: Number(data.price || 0),
     duration: data.duration || '5 Minutes',
-    category_id: data.category_id || 'cat-demo',
+    category_id: catId,
     short_description: data.short_description || null,
     full_description: data.full_description || null,
     important_info: data.important_info || null,
     photos: Array.isArray(data.photos) ? data.photos : [],
-    enabled: data.enabled !== undefined ? data.enabled : true,
+    enabled: data.enabled !== undefined && data.enabled !== 'false' ? Boolean(data.enabled) : true,
     position: data.position ?? store.services.length,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -401,6 +402,10 @@ export async function createService(data: any) {
 export async function updateService(id: string, updates: any) {
   const index = store.services.findIndex((s) => s.id === id);
   if (index === -1) return null;
+
+  if (updates.category_id && KNOWN_CATEGORY_ALIASES[updates.category_id]) {
+    updates.category_id = KNOWN_CATEGORY_ALIASES[updates.category_id];
+  }
 
   const payload = {
     ...updates,
@@ -529,10 +534,10 @@ export function getPublicData() {
   return {
     profile: cleanProfile,
     categories: store.categories,
-    services: store.services.filter((s) => s.enabled),
-    reviews: store.reviews.filter((r) => !r.hidden),
-    paymentMethods: store.paymentMethods.filter((p) => p.enabled),
-    socialContacts: store.socialContacts.filter((c) => c.enabled),
+    services: store.services.filter((s) => s.enabled !== false && s.enabled !== 'false'),
+    reviews: store.reviews.filter((r) => r.hidden !== true && r.hidden !== 'true'),
+    paymentMethods: store.paymentMethods.filter((p) => p.enabled !== false && p.enabled !== 'false'),
+    socialContacts: store.socialContacts.filter((c) => c.enabled !== false && c.enabled !== 'false'),
     terms: store.terms,
     messageTemplate: store.messageTemplate,
   };
