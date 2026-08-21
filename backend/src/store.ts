@@ -326,13 +326,13 @@ export async function initDatabaseStore() {
   store.socialContacts = mergeSocialContacts(INITIAL_SOCIAL_CONTACTS, store.socialContacts);
 
   let attempts = 0;
-  const maxAttempts = process.env.NODE_ENV === 'production' ? 3 : 1;
+  const maxAttempts = 4;
 
   while (attempts < maxAttempts) {
     attempts++;
     try {
       const fetchTimeout = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error(`Supabase fetch timed out after 5000ms (attempt ${attempts})`)), 5000)
+        setTimeout(() => reject(new Error(`Supabase fetch timed out after 15000ms (attempt ${attempts})`)), 15000)
       );
 
       const supabaseFetch = Promise.all([
@@ -366,9 +366,9 @@ export async function initDatabaseStore() {
       console.log(`[STORE] Server database store initialized successfully. Active services: ${store.services.length}`);
       return;
     } catch (e: any) {
-      console.warn(`[STORE] Database initialization attempt ${attempts} warning:`, e.message);
+      console.warn(`[STORE] Database initialization attempt ${attempts} warning:`, e?.message || e);
       if (attempts < maxAttempts) {
-        await new Promise((r) => setTimeout(r, 1000));
+        await new Promise((r) => setTimeout(r, 1500));
       }
     }
   }
