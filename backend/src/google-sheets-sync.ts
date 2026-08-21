@@ -55,7 +55,7 @@ export async function syncServiceToGoogleSheet(service: any): Promise<boolean> {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'UPSERT', service: row }),
-        signal: AbortSignal.timeout(5000),
+        signal: AbortSignal.timeout(15000),
       });
 
       if (!res.ok) {
@@ -83,7 +83,7 @@ export async function deleteServiceFromGoogleSheet(serviceId: string): Promise<b
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'DELETE', id: serviceId }),
-        signal: AbortSignal.timeout(5000),
+        signal: AbortSignal.timeout(15000),
       });
 
       if (!res.ok) {
@@ -111,7 +111,7 @@ export async function syncGoogleSheetToSupabase(): Promise<{ updated: number; er
   try {
     // If Apps Script Webhook or CSV export endpoint is configured
     const csvUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
-    const res = await fetch(csvUrl, { signal: AbortSignal.timeout(5000) });
+    const res = await fetch(csvUrl, { signal: AbortSignal.timeout(15000) });
 
     if (!res.ok) {
       isSyncing = false;
