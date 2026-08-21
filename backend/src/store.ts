@@ -29,8 +29,8 @@ const STORE_FILE = path.join(DATA_DIR, 'store.json');
 export let store: DatabaseStore = {
   profile: {
     id: '00000000-0000-0000-0000-000000000001',
-    display_name: 'HotHarini69',
-    bio: 'Premium personal service provider. Available for video calls, voice calls, and exclusive content. Discrete, professional, and unforgettable experiences.',
+    display_name: 'hotharini69',
+    bio: 'hotharini69 info',
     languages: ['English', 'Hindi'],
     profile_photo: '/logo.jpg',
     availability: 'available',
@@ -55,7 +55,7 @@ export let store: DatabaseStore = {
   },
   messageTemplate: {
     id: 'template-default',
-    template: "Hello HotHarini69! I would like to book the following service:\n\nService: [Service Name]\nDuration: [Duration]\nPrice: ₹[Price]\n\nI have read and accepted all rules and terms.",
+    template: "Hello hotharini69! I would like to book the following service:\n\nService: [Service Name]\nDuration: [Duration]\nPrice: ₹[Price]\n\nI have read and accepted all rules and terms.",
     updated_at: new Date().toISOString(),
   },
   users: [
@@ -230,10 +230,23 @@ function mergeServices(baseServices: any[], fetchedServices: any[]) {
     }
 
     const existing = map.get(s.id);
+
+    // Smart photos merge: prefer custom uploaded photos over pexels dummy photos
+    let photos = Array.isArray(s.photos) ? s.photos : (existing?.photos || []);
+    if (existing && Array.isArray(existing.photos) && existing.photos.length > 0) {
+      const existingHasCustom = existing.photos.some((p: string) => typeof p === 'string' && p.length > 0 && !p.includes('pexels.com'));
+      const sHasCustom = Array.isArray(s.photos) && s.photos.some((p: string) => typeof p === 'string' && p.length > 0 && !p.includes('pexels.com'));
+
+      if (existingHasCustom && !sHasCustom) {
+        photos = existing.photos;
+      }
+    }
+
     map.set(s.id, {
       ...existing,
       ...s,
       category_id: catId,
+      photos: Array.isArray(photos) ? photos : [],
       enabled: s.enabled !== false && s.enabled !== 'false',
     });
   }

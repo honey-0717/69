@@ -23,6 +23,8 @@ router.put('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =>
   }
 });
 
+import { uploadImageFile } from '../storage';
+
 // POST /api/profile/upload
 router.post('/upload', requireAuth, upload.single('file'), async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -35,23 +37,8 @@ router.post('/upload', requireAuth, upload.single('file'), async (req: Authentic
       return res.status(400).json({ error: 'Only image files are allowed' });
     }
 
-    const fileExt = file.originalname.split('.').pop() || 'png';
-    const fileName = `profile-${Date.now()}.${fileExt}`;
-
-    const { error: uploadErr } = await adminSupabase.storage
-      .from('profile-photos')
-      .upload(fileName, file.buffer, { contentType: file.mimetype });
-
-    if (!uploadErr) {
-      const { data: publicUrlData } = adminSupabase.storage
-        .from('profile-photos')
-        .getPublicUrl(fileName);
-      return res.json({ url: publicUrlData.publicUrl });
-    }
-
-    const base64 = file.buffer.toString('base64');
-    const dataUrl = `data:${file.mimetype};base64,${base64}`;
-    return res.json({ url: dataUrl });
+    const publicUrl = await uploadImageFile(file.buffer, file.mimetype, file.originalname, 'profile-photos');
+    return res.json({ url: publicUrl });
   } catch (err: any) {
     return res.status(500).json({ error: err.message || 'File upload failed' });
   }

@@ -27,18 +27,18 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
-  title: 'HotHarini69 — Premium Personal Services',
+  title: 'hotharini69',
   description:
-    'Premium personal service provider. Video calls, voice calls, and exclusive content. Discrete, professional, and unforgettable experiences.',
+    'hotharini69 info',
   icons: {
     icon: '/icon.svg',
     shortcut: '/icon.svg',
     apple: '/icon.svg',
   },
   openGraph: {
-    title: 'HotHarini69 — Premium Personal Services',
+    title: 'hotharini69',
     description:
-      'Premium personal service provider. Video calls, voice calls, and exclusive content.',
+      'hotharini69 info',
     images: ['/logo.jpg'],
   },
 };

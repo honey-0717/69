@@ -46,10 +46,8 @@ export function ProfileHeader({
     }, 2000);
   };
 
-  const displayName = profile?.display_name || 'HotHarini69';
-  const bio =
-    profile?.bio ||
-    'Premium personal service provider. Available for video calls, voice calls, and exclusive content. Discrete, professional, and unforgettable experiences.';
+  const displayName = profile?.display_name || 'hotharini69';
+  const bio = profile?.bio || 'hotharini69 info';
   const photoUrl =
     !profile?.profile_photo ||
     profile.profile_photo.includes('unsplash') ||

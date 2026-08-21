@@ -37,7 +37,7 @@ const navItems = [
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 
-let cachedDisplayName = 'HotHarini69';
+let cachedDisplayName = 'hotharini69';
 
 export function AdminSidebar() {
   const pathname = usePathname();
@@ -53,7 +53,7 @@ export function AdminSidebar() {
       } catch (e) {}
     });
 
-    if (cachedDisplayName === 'HotHarini69') {
+    if (cachedDisplayName === 'hotharini69') {
       apiRequest('/api/profile').then(({ data }) => {
         if (data?.display_name) {
           cachedDisplayName = data.display_name;

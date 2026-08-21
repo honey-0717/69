@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 
+import path from 'path';
 import healthRoutes from './routes/health';
 import publicDataRoutes from './routes/public-data';
 import authRoutes from './routes/auth';
@@ -20,6 +21,7 @@ import categoriesRoutes from './routes/categories';
 import googleSheetsSyncRoutes from './routes/google-sheets-sync';
 
 import { initDatabaseStore, isStoreInitialized, isDbReady } from './store';
+import { ensureStorageBuckets } from './storage';
 
 dotenv.config();
 
@@ -79,6 +81,9 @@ app.use(
 app.use(cookieParser());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Serve static uploaded files fallback
+app.use('/uploads', express.static(path.join(__dirname, '..', 'data', 'uploads')));
 
 // Security Headers Middleware
 app.use((_req: Request, res: Response, next: NextFunction) => {
@@ -159,9 +164,12 @@ server.on('connection', (socket: Socket) => {
   socket.on('close', () => openSockets.delete(socket));
 });
 
-// Initialize database store asynchronously in background
+// Initialize database store and storage buckets asynchronously in background
 initDatabaseStore().catch((err) => {
   console.warn('[BACKEND] Initial store load notice:', err?.message || err);
+});
+ensureStorageBuckets().catch((err) => {
+  console.warn('[BACKEND] Storage buckets init notice:', err?.message || err);
 });
 
 let isShuttingDown = false;
