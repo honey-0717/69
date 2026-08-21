@@ -1,6 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 import WebSocket from 'ws';
 import dotenv from 'dotenv';
+import dns from 'dns';
+
+// Force IPv4 DNS lookup order to prevent Node 18+ undici 'TypeError: fetch failed' on Railway
+if (dns && typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
 
 dotenv.config();
 
@@ -29,6 +35,14 @@ export const adminSupabase = createClient(
     auth: {
       persistSession: false,
       autoRefreshToken: false,
+    },
+    global: {
+      fetch: (url, options) => {
+        return fetch(url, options).catch((err) => {
+          console.warn('[SUPABASE FETCH RETRY NOTICE]', err?.message || err);
+          return fetch(url, options);
+        });
+      },
     },
     realtime: {
       transport: customWebSocket as any,
